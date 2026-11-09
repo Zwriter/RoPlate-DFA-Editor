@@ -1,9 +1,76 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:app="using:Dfa.App"
+        xmlns:controls="using:Dfa.App.Controls"
+        xmlns:examples="using:Dfa.Core.Examples"
+        xmlns:table="using:Dfa.App.Views.TransitionTable"
         x:Class="Dfa.App.MainWindow"
-        Title="Dfa.App">
-    Welcome to Avalonia!
+        x:DataType="app:MainViewModel"
+        x:CompileBindings="True"
+        Title="{Binding Title}"
+        Width="1100" Height="700" MinWidth="800" MinHeight="500">
+
+  <Window.KeyBindings>
+    <KeyBinding Gesture="Ctrl+N" Command="{Binding NewCommand}" />
+    <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenCommand}" />
+    <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}" />
+    <KeyBinding Gesture="Ctrl+Shift+S" Command="{Binding SaveAsCommand}" />
+  </Window.KeyBindings>
+
+  <Window.Styles>
+    <Style Selector="TextBlock.wip">
+      <Setter Property="Text" Value="Work in progress" />
+      <Setter Property="Margin" Value="8" />
+      <Setter Property="FontStyle" Value="Italic" />
+    </Style>
+  </Window.Styles>
+
+  <DockPanel>
+    <Menu DockPanel.Dock="Top">
+      <MenuItem Header="_File">
+        <MenuItem Header="_New" InputGesture="Ctrl+N" Command="{Binding NewCommand}" />
+        <MenuItem Header="_Open…" InputGesture="Ctrl+O" Command="{Binding OpenCommand}" />
+        <MenuItem Header="_Save" InputGesture="Ctrl+S" Command="{Binding SaveCommand}" />
+        <MenuItem Header="Save _as…" InputGesture="Ctrl+Shift+S" Command="{Binding SaveAsCommand}" />
+      </MenuItem>
+      <MenuItem Header="_Examples" ItemsSource="{Binding Examples}">
+        <MenuItem.Styles>
+          <Style Selector="MenuItem > MenuItem" x:DataType="examples:ExampleInfo">
+            <Setter Property="Header" Value="{Binding Title}" />
+            <Setter Property="Command"
+                    Value="{Binding $parent[Window].((app:MainViewModel)DataContext).OpenExampleCommand}" />
+            <Setter Property="CommandParameter" Value="{Binding}" />
+          </Style>
+        </MenuItem.Styles>
+      </MenuItem>
+      <MenuItem Header="_Apps">
+        <MenuItem Header="_RoPlate" Command="{Binding ShowRoPlateCommand}" />
+      </MenuItem>
+    </Menu>
+
+    <Border DockPanel.Dock="Bottom" Padding="8,4"
+            BorderThickness="0,1,0,0" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+      <TextBlock Text="{Binding StatusMessage}" TextTrimming="CharacterEllipsis" />
+    </Border>
+
+    <Grid ColumnDefinitions="*,4,380">
+      <controls:DfaCanvas Document="{Binding Session.Document}" />
+      <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+      <TabControl Grid.Column="2" SelectedIndex="{Binding SelectedTabIndex}">
+        <!-- Order matches MainTab: Editor, Simulator, Tests. -->
+        <TabItem Header="Edit">
+          <DockPanel>
+            <TextBlock DockPanel.Dock="Top" Classes="wip" />
+            <table:TransitionTablePanel DataContext="{Binding Table}" Margin="8" />
+          </DockPanel>
+        </TabItem>
+        <TabItem Header="Simulate">
+          <TextBlock Classes="wip" />
+        </TabItem>
+        <TabItem Header="Tests">
+          <TextBlock Classes="wip" />
+        </TabItem>
+      </TabControl>
+    </Grid>
+  </DockPanel>
 </Window>
