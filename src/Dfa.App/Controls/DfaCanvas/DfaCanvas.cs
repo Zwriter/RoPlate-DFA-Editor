@@ -6,8 +6,8 @@ using Avalonia.Controls;
 using Avalonia.Data;
 using Dfa.Core.Documents;
 
-// Stub (E-00): all properties and events from contract 3; drawing and editing come in E-02 / E-03.
-public sealed class DfaCanvas : UserControl
+// Properties and events from contract 3; painting is in DfaCanvas.Drawing.cs, editing comes in E-03.
+public sealed partial class DfaCanvas : UserControl
 {
     public static readonly StyledProperty<DfaDocument?> DocumentProperty =
         AvaloniaProperty.Register<DfaCanvas, DfaDocument?>(nameof(Document));
@@ -26,6 +26,12 @@ public sealed class DfaCanvas : UserControl
 
     public static readonly StyledProperty<string?> SelectedStateProperty =
         AvaloniaProperty.Register<DfaCanvas, string?>(nameof(SelectedState), defaultBindingMode: BindingMode.TwoWay);
+
+    static DfaCanvas()
+    {
+        AffectsRender<DfaCanvas>(DocumentProperty);
+        AffectsMeasure<DfaCanvas>(DocumentProperty);
+    }
 
     public event EventHandler<string>? StateClicked;
 
@@ -65,6 +71,29 @@ public sealed class DfaCanvas : UserControl
     {
         get => GetValue(SelectedStateProperty);
         set => SetValue(SelectedStateProperty, value);
+    }
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+        if (change.Property == DocumentProperty)
+        {
+            if (change.OldValue is DfaDocument old)
+            {
+                old.Changed -= OnDocumentChanged;
+            }
+
+            if (change.NewValue is DfaDocument document)
+            {
+                document.Changed += OnDocumentChanged;
+            }
+        }
+    }
+
+    private void OnDocumentChanged(object? sender, DocumentChangedEventArgs e)
+    {
+        InvalidateMeasure();
+        InvalidateVisual();
     }
 
     private void OnStateClicked(string state) => StateClicked?.Invoke(this, state);
