@@ -18,7 +18,7 @@
 
 It ships with a real-world app built on the same engine: **RoPlate**, a Romanian license-plate checker. The plate format is a 14-state automaton, and the checker validates a plate as you type. It tells you what it expects next ("waiting for 3 letters") and can open the automaton so you can see exactly where an input got stuck.
 
-> **Status:** the engine (`Dfa.Core`) is complete and fully tested. The editor, simulator and RoPlate screens are under active development; see the [team plan](public/docs/plan/README.md).
+> **Status:** the engine (`Dfa.Core`) is complete and fully tested. The main window, the File and Examples menus and the automaton drawing work; editing on the drawing, the simulator and the RoPlate screen are under active development. See the [team plan](public/docs/plan/README.md).
 
 ## Contents
 
@@ -62,6 +62,8 @@ git clone https://github.com/Zwriter/RoPlate.git
 cd RoPlate
 dotnet run --project src/Dfa.App
 ```
+
+Open **Examples ▸ Even number of a** to see an automaton drawn. The [quick start guide](public/docs/quick-start.md) walks through the window, the examples and the File menu.
 
 Run the test suite:
 
@@ -108,7 +110,7 @@ var result = dfa.AddTransitions("q0", ["a"], "q0");
 // result.Error == "From q0 there is already a transition on 'a' to q1."
 ```
 
-The full API is in the [engine contract](public/docs/plan/contracts/01-core-api.md), and the [engine guide](public/docs/core.md) explains how to use it.
+The full API is in the [engine contract](public/docs/plan/contracts/01-core-api.md), and the [engine guide](public/docs/core.md) explains how to use it. To add a panel to the desktop app, read the [app guide](public/docs/app.md).
 
 ## The `.dfa.json` format
 
@@ -167,8 +169,10 @@ tests/
 └─ Dfa.Tests/    xUnit + Shouldly
 public/
 ├─ docs/
-│  ├─ core.md    the engine guide
-│  └─ plan/      the team plan and the contracts between the parts
+│  ├─ quick-start.md  the user quick start guide
+│  ├─ core.md         the engine guide
+│  ├─ app.md          the app guide (window, session, drawing)
+│  └─ plan/           the team plan and the contracts between the parts
 └─ icons/        the app icon (SVG and PNG sizes)
 ```
 

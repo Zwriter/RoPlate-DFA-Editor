@@ -54,7 +54,9 @@
     </Border>
 
     <Grid ColumnDefinitions="*,4,380">
-      <controls:DfaCanvas Document="{Binding Session.Document}" />
+      <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <controls:DfaCanvas Document="{Binding Session.Document}" />
+      </ScrollViewer>
       <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
       <TabControl Grid.Column="2" SelectedIndex="{Binding SelectedTabIndex}">
         <!-- Order matches MainTab: Editor, Simulator, Tests. -->
