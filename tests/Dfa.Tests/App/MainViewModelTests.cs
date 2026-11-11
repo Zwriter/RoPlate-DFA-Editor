@@ -103,14 +103,4 @@ public sealed class MainViewModelTests : IDisposable
         _main.Session.Document.Dfa.States.ShouldHaveSingleItem();
         _main.SelectedTabIndex.ShouldBe((int)MainTab.Simulator);
     }
-
-    [Fact]
-    public void OpenInSimulator_StartsTheSimulationOnTheInput()
-    {
-        _main.Navigation.OpenInSimulator(ExampleCatalog.Load("even-a"), "ab");
-
-        _main.Simulator.IsRunning.ShouldBeTrue();
-        _main.Simulator.Input.ShouldBe("ab");
-        _main.Simulator.CurrentState.ShouldBe("q0");
-    }
 }

@@ -32,10 +32,10 @@ public sealed partial class SimulatorViewModel : ObservableObject
         _session = session;
         _dialogs = dialogs;
 
-        // SI-07: a structural edit (or undo/redo) resets the run; moving states does not.
+        // SI-07: Structure and Reset (undo/redo) stop the simulation with the message; Layout does not.
         session.DocumentEdited += (_, e) =>
         {
-            if (IsRunning && e.Kind is DocumentChangeKind.Structure or DocumentChangeKind.Reset)
+            if (e.Kind is DocumentChangeKind.Structure or DocumentChangeKind.Reset)
             {
                 Stop();
                 Message = ModifiedMessage;
@@ -72,8 +72,6 @@ public sealed partial class SimulatorViewModel : ObservableObject
     // Always Edit until the "Guess" mode (S-08) asks for PickState.
     public CanvasMode RequestedCanvasMode => CanvasMode.Edit;
 
-    public string Explanation => Run?.Explanation ?? "";
-
     // The "Guess" mode (S-08) reacts to clicks on the canvas; without it a click does nothing.
     public void OnStateClicked(string state)
     {
@@ -90,7 +88,7 @@ public sealed partial class SimulatorViewModel : ObservableObject
             .ToList();
         if (errors.Count > 0)
         {
-            _ = _dialogs.ShowErrorsAsync("The simulation cannot start", errors);
+            _ = _dialogs.ShowErrorsAsync("Start", errors);
             return;
         }
 
@@ -144,7 +142,6 @@ public sealed partial class SimulatorViewModel : ObservableObject
         OnPropertyChanged(nameof(CurrentState));
         OnPropertyChanged(nameof(HighlightKind));
         OnPropertyChanged(nameof(LastEdge));
-        OnPropertyChanged(nameof(Explanation));
         StepForwardCommand.NotifyCanExecuteChanged();
         StepBackCommand.NotifyCanExecuteChanged();
         ResetCommand.NotifyCanExecuteChanged();

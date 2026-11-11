@@ -53,7 +53,6 @@ public class SimulatorViewModelTests
 
         _sim.CurrentState.ShouldBe("q1");
         _sim.LastEdge.ShouldBe(new EdgeRef("q0", "q1"));
-        _sim.Explanation.ShouldBe("Step 1 of 2.");
         _sim.StepBackCommand.CanExecute(null).ShouldBeTrue();
     }
 
@@ -66,7 +65,6 @@ public class SimulatorViewModelTests
 
         _sim.IsAtEnd.ShouldBeTrue();
         _sim.HighlightKind.ShouldBe(HighlightKind.Rejected);
-        _sim.Explanation.ShouldBe("REJECTED: the word ended in q1, which is not final.");
         _sim.StepForwardCommand.CanExecute(null).ShouldBeFalse();
     }
 

@@ -6,36 +6,24 @@
              x:CompileBindings="True">
 
     <StackPanel Margin="8" Spacing="8">
-        <TextBlock FontWeight="SemiBold" Text="Input word" />
         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-            <!-- An empty field is the empty word ε. -->
-            <TextBox Text="{Binding Input}" PlaceholderText="ε"
-                     AutomationProperties.Name="Input word (empty = ε)">
+            <!-- S-01: empty = ε, shows the text "ε" when empty. -->
+            <TextBox Text="{Binding Input}" PlaceholderText="ε">
                 <TextBox.KeyBindings>
                     <KeyBinding Gesture="Enter" Command="{Binding StartSimulationCommand}" />
                 </TextBox.KeyBindings>
             </TextBox>
-            <Button Grid.Column="1" Content="_Start" Command="{Binding StartSimulationCommand}"
-                    ToolTip.Tip="Validate the automaton and start the simulation (Enter)" />
+            <Button Grid.Column="1" Content="Start" Command="{Binding StartSimulationCommand}" />
         </Grid>
 
-        <WrapPanel IsEnabled="{Binding IsRunning}">
-            <Button Margin="0,0,4,4" Content="⏮ Reset" Command="{Binding ResetCommand}"
-                    ToolTip.Tip="Back to the start configuration" />
-            <Button Margin="0,0,4,4" Content="◀ Step back" Command="{Binding StepBackCommand}"
-                    ToolTip.Tip="Undo the last step" />
-            <Button Margin="0,0,4,4" Content="Step forward ▶" Command="{Binding StepForwardCommand}"
-                    ToolTip.Tip="Read the next symbol" />
-            <Button Margin="0,0,4,4" Content="Run to end ⏭" Command="{Binding RunToEndCommand}"
-                    ToolTip.Tip="Read the whole word" />
+        <WrapPanel>
+            <Button Margin="0,0,4,4" Content="Step forward" Command="{Binding StepForwardCommand}" />
+            <Button Margin="0,0,4,4" Content="Step back" Command="{Binding StepBackCommand}" />
+            <Button Margin="0,0,4,4" Content="Reset" Command="{Binding ResetCommand}" />
+            <Button Margin="0,0,4,4" Content="Run to end" Command="{Binding RunToEndCommand}" />
         </WrapPanel>
 
-        <TextBlock IsVisible="{Binding IsRunning}" TextWrapping="Wrap">
-            <Run Text="Current state: " />
-            <Run FontWeight="SemiBold" Text="{Binding CurrentState}" />
-        </TextBlock>
-        <TextBlock Text="{Binding Explanation}" TextWrapping="Wrap" />
-        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" FontStyle="Italic"
+        <TextBlock Text="{Binding Message}" TextWrapping="Wrap"
                    IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}" />
     </StackPanel>
 </UserControl>
