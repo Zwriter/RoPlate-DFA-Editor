@@ -3,6 +3,7 @@
         xmlns:app="using:Dfa.App"
         xmlns:controls="using:Dfa.App.Controls"
         xmlns:examples="using:Dfa.Core.Examples"
+        xmlns:simulator="using:Dfa.App.Views.Simulator"
         xmlns:table="using:Dfa.App.Views.TransitionTable"
         x:Class="Dfa.App.MainWindow"
         x:DataType="app:MainViewModel"
@@ -67,7 +68,7 @@
           </DockPanel>
         </TabItem>
         <TabItem Header="Simulate">
-          <TextBlock Classes="wip" />
+          <simulator:SimulatorPanel DataContext="{Binding Simulator}" />
         </TabItem>
         <TabItem Header="Tests">
           <TextBlock Classes="wip" />

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Dfa.App.Services;
+using Dfa.App.Views.Simulator;
 using Dfa.App.Views.TransitionTable;
 using Dfa.Core.Documents;
 using Dfa.Core.Examples;
@@ -26,6 +27,7 @@ public sealed partial class MainViewModel : ObservableObject
         _dialogs = dialogs;
         Navigation = new NavigationService(this, Session);
         Table = new TransitionTableViewModel(Session);
+        Simulator = new SimulatorViewModel(Session, dialogs);
 
         Session.PropertyChanged += OnSessionPropertyChanged;
         Session.DocumentReplaced += (_, _) => OnPropertyChanged(nameof(Title));
@@ -36,6 +38,8 @@ public sealed partial class MainViewModel : ObservableObject
     public INavigationService Navigation { get; }
 
     public TransitionTableViewModel Table { get; }
+
+    public SimulatorViewModel Simulator { get; }
 
     public IReadOnlyList<ExampleInfo> Examples => ExampleCatalog.All;
 

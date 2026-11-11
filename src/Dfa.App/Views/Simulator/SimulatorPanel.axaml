@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Dfa.App.Views.Simulator"
+             x:Class="Dfa.App.Views.Simulator.SimulatorPanel"
+             x:DataType="vm:SimulatorViewModel"
+             x:CompileBindings="True">
+
+    <StackPanel Margin="8" Spacing="8">
+        <TextBlock FontWeight="SemiBold" Text="Input word" />
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <!-- An empty field is the empty word ε. -->
+            <TextBox Text="{Binding Input}" PlaceholderText="ε"
+                     AutomationProperties.Name="Input word (empty = ε)">
+                <TextBox.KeyBindings>
+                    <KeyBinding Gesture="Enter" Command="{Binding StartSimulationCommand}" />
+                </TextBox.KeyBindings>
+            </TextBox>
+            <Button Grid.Column="1" Content="_Start" Command="{Binding StartSimulationCommand}"
+                    ToolTip.Tip="Validate the automaton and start the simulation (Enter)" />
+        </Grid>
+
+        <WrapPanel IsEnabled="{Binding IsRunning}">
+            <Button Margin="0,0,4,4" Content="⏮ Reset" Command="{Binding ResetCommand}"
+                    ToolTip.Tip="Back to the start configuration" />
+            <Button Margin="0,0,4,4" Content="◀ Step back" Command="{Binding StepBackCommand}"
+                    ToolTip.Tip="Undo the last step" />
+            <Button Margin="0,0,4,4" Content="Step forward ▶" Command="{Binding StepForwardCommand}"
+                    ToolTip.Tip="Read the next symbol" />
+            <Button Margin="0,0,4,4" Content="Run to end ⏭" Command="{Binding RunToEndCommand}"
+                    ToolTip.Tip="Read the whole word" />
+        </WrapPanel>
+
+        <TextBlock IsVisible="{Binding IsRunning}" TextWrapping="Wrap">
+            <Run Text="Current state: " />
+            <Run FontWeight="SemiBold" Text="{Binding CurrentState}" />
+        </TextBlock>
+        <TextBlock Text="{Binding Explanation}" TextWrapping="Wrap" />
+        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" FontStyle="Italic"
+                   IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}" />
+    </StackPanel>
+</UserControl>
