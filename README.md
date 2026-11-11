@@ -155,7 +155,7 @@ Open any of these from the **Examples** menu. Each one comes with a position and
 | `contains-aba` | words that contain `aba` |
 | `div3` | binary numbers divisible by 3 |
 | `length-3` | words whose length is a multiple of 3 |
-| `license-plate` | Romanian license plates (RoPlate), coming soon |
+| `license-plate` | Romanian license plates (RoPlate): `B 123 ABC`, `CJ 12 ABC` |
 
 To add your own, drop a `{id}.dfa.json` file into `src/Dfa.Core/Examples/`. It is embedded and tested automatically.
 

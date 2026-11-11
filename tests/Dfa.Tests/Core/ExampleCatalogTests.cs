@@ -23,7 +23,9 @@ public class ExampleCatalogTests
         var doc = ExampleCatalog.Load(id);
 
         doc.Name.ShouldBe(ExampleCatalog.All.Single(e => e.Id == id).Title);
-        DfaValidator.Validate(doc.Dfa).ShouldBeEmpty();
+        // Info issues (missing transitions) are allowed: license-plate is partial on purpose,
+        // a blocked run is how RoPlate shows an invalid plate.
+        DfaValidator.Validate(doc.Dfa).Where(i => i.Severity != Severity.Info).ShouldBeEmpty();
         doc.Layout.Keys.ShouldBe(doc.Dfa.States, ignoreOrder: true);
         doc.Descriptions.Keys.ShouldBe(doc.Dfa.States, ignoreOrder: true);
         doc.Tests.ShouldNotBeEmpty();

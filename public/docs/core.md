@@ -81,7 +81,7 @@ The UI does not work with `Dfa` directly, but through `DfaDocument`, which also 
 
 ### Adding an example
 
-Drop `{id}.dfa.json` into `src/Dfa.Core/Examples/`: every `*.dfa.json` there is embedded automatically. `ExampleCatalog.All` lists an id from the contract table only once its file exists, so `license-plate` appears as soon as P3 adds it, with no code change. The catalog tests then check that it loads, has no validator issues, has a position and description for every state, and passes its own `tests`.
+Drop `{id}.dfa.json` into `src/Dfa.Core/Examples/`: every `*.dfa.json` there is embedded automatically. `ExampleCatalog.All` lists an id from the contract table only once its file exists, so `license-plate` appears as soon as P3 adds it, with no code change. The catalog tests then check that it loads, has no validator errors or warnings (info about missing transitions is allowed, since `license-plate` is partial on purpose), has a position and description for every state, and passes its own `tests`.
 
 ## 4. Commands
 
