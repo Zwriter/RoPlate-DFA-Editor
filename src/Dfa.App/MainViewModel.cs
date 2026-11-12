@@ -28,6 +28,12 @@ public sealed partial class MainViewModel : ObservableObject
         Navigation = new NavigationService(this, Session);
         Table = new TransitionTableViewModel(Session);
         Simulator = new SimulatorViewModel(Session, dialogs);
+        BatchTests = new BatchTestViewModel(Session);
+        BatchTests.OpenInSimulatorRequested += (_, word) =>
+        {
+            Navigation.ShowTab(MainTab.Simulator);
+            Simulator.Start(word);
+        };
 
         Session.PropertyChanged += OnSessionPropertyChanged;
         Session.DocumentReplaced += (_, _) => OnPropertyChanged(nameof(Title));
@@ -40,6 +46,8 @@ public sealed partial class MainViewModel : ObservableObject
     public TransitionTableViewModel Table { get; }
 
     public SimulatorViewModel Simulator { get; }
+
+    public BatchTestViewModel BatchTests { get; }
 
     public IReadOnlyList<ExampleInfo> Examples => ExampleCatalog.All;
 

@@ -71,7 +71,7 @@
           <simulator:SimulatorPanel DataContext="{Binding Simulator}" />
         </TabItem>
         <TabItem Header="Tests">
-          <TextBlock Classes="wip" />
+          <simulator:BatchTestPanel DataContext="{Binding BatchTests}" />
         </TabItem>
       </TabControl>
     </Grid>
