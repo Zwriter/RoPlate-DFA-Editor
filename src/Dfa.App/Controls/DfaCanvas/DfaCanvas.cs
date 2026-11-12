@@ -31,7 +31,8 @@ public sealed partial class DfaCanvas : UserControl
 
     static DfaCanvas()
     {
-        AffectsRender<DfaCanvas>(DocumentProperty, SelectedStateProperty);
+        AffectsRender<DfaCanvas>(
+            DocumentProperty, SelectedStateProperty, HighlightedStateProperty, HighlightKindProperty, HighlightedEdgeProperty);
         AffectsMeasure<DfaCanvas>(DocumentProperty);
     }
 

@@ -28,9 +28,16 @@ public sealed partial class DfaCanvas
 
         foreach (var edge in edges)
         {
-            // The selected arrow (E-03) is drawn thicker, so the selection is not shown by color alone.
+            // The arrow just taken (E-05) and the selected arrow (E-03) are drawn thicker, not by color alone.
+            var shape = ShapeOf(document, edge, edges);
+            if (LastEdgeBrush(edge, brush) is { } last)
+            {
+                DrawEdge(context, new Pen(last, LastEdgeThickness), last, shape, SymbolList.Format(edge.Symbols));
+                continue;
+            }
+
             var edgePen = _selectedEdge == new EdgeRef(edge.From, edge.To) ? new Pen(brush, 3) : pen;
-            DrawEdge(context, edgePen, brush, ShapeOf(document, edge, edges), SymbolList.Format(edge.Symbols));
+            DrawEdge(context, edgePen, brush, shape, SymbolList.Format(edge.Symbols));
         }
 
         foreach (var state in dfa.States)
@@ -48,6 +55,7 @@ public sealed partial class DfaCanvas
                 context.DrawEllipse(null, pen, center, CanvasGeometry.FinalRadius, CanvasGeometry.FinalRadius);
             }
 
+            DrawStateHighlight(context, state, center, brush);
             DrawText(context, brush, state, center);
         }
 
