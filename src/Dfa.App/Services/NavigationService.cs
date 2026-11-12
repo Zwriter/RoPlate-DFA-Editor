@@ -10,7 +10,7 @@ public sealed class NavigationService(MainViewModel main, DocumentSession sessio
     {
         session.Replace(document.Clone(), null);
         ShowTab(MainTab.Simulator);
-        // shortcut: Simulator.Start(input) is not called yet, wire it once P3's SimulatorViewModel (S-01) is merged.
+        main.Simulator.Start(input);
     }
 
     // shortcut: no RoPlateWindow yet, open it here once P3's R-02 is merged.

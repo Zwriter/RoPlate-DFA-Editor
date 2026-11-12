@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Dfa.App.Views.Simulator"
+             x:Class="Dfa.App.Views.Simulator.SimulatorPanel"
+             x:DataType="vm:SimulatorViewModel"
+             x:CompileBindings="True">
+
+    <StackPanel Margin="8" Spacing="8">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <!-- S-01: empty = ε, shows the text "ε" when empty. -->
+            <TextBox Text="{Binding Input}" PlaceholderText="ε">
+                <TextBox.KeyBindings>
+                    <KeyBinding Gesture="Enter" Command="{Binding StartSimulationCommand}" />
+                </TextBox.KeyBindings>
+            </TextBox>
+            <Button Grid.Column="1" Content="Start" Command="{Binding StartSimulationCommand}" />
+        </Grid>
+
+        <WrapPanel>
+            <Button Margin="0,0,4,4" Content="Step forward" Command="{Binding StepForwardCommand}" />
+            <Button Margin="0,0,4,4" Content="Step back" Command="{Binding StepBackCommand}" />
+            <Button Margin="0,0,4,4" Content="Reset" Command="{Binding ResetCommand}" />
+            <Button Margin="0,0,4,4" Content="Run to end" Command="{Binding RunToEndCommand}" />
+        </WrapPanel>
+
+        <TextBlock Text="{Binding Message}" TextWrapping="Wrap"
+                   IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}" />
+    </StackPanel>
+</UserControl>

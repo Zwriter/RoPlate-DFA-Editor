@@ -11,6 +11,7 @@ A short guide for whoever adds a panel to the app (P1, P3) or changes the window
 | `Services/` | `DocumentSession`, `NavigationService`, `DialogService` and their interfaces |
 | `Controls/DfaCanvas/` | the drawing: `DfaCanvas` (properties, events), `DfaCanvas.Drawing.cs` (painting), `CanvasGeometry` (arrow math) |
 | `Views/TransitionTable/` | the δ table panel (P1) |
+| `Views/Simulator/` | the simulation panel: `SimulatorPanel` + `SimulatorViewModel` (P3) |
 
 Controls keep the namespace `Dfa.App.Controls` even inside their own folder (a namespace named after the folder would clash with the class name).
 
@@ -87,4 +88,4 @@ All geometry is in `CanvasGeometry` (pure math, tested in `CanvasGeometryTests`)
 | E-07 | state descriptions | not started |
 | E-08 | image export (bonus) | not started |
 
-Known gaps, marked `shortcut:` in the code: `NavigationService.OpenInSimulator` does not call `Simulator.Start` yet, and `ShowRoPlate` only shows a status message until `RoPlateWindow` exists. Closing the window does not ask to save.
+Known gaps, marked `shortcut:` in the code: `ShowRoPlate` only shows a status message until `RoPlateWindow` exists. Closing the window does not ask to save.
