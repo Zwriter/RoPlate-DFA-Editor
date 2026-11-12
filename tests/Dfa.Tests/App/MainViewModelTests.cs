@@ -103,4 +103,28 @@ public sealed class MainViewModelTests : IDisposable
         _main.Session.Document.Dfa.States.ShouldHaveSingleItem();
         _main.SelectedTabIndex.ShouldBe((int)MainTab.Simulator);
     }
+
+    [Fact]
+    public void OpenInSimulator_WhenDirty_AsksAndKeepsTheDocumentIfTheSaveIsCancelled()
+    {
+        _main.Session.Document.AddState(new Point2(0, 0));
+        _dialogs.ConfirmAnswer = true;
+
+        _main.Navigation.OpenInSimulator(DfaDocument.CreateEmpty("copy"), "ab");
+
+        _dialogs.Confirms.ShouldBe(1);
+        _main.Session.Document.Name.ShouldBe("New automaton");
+        _main.Session.Document.Dfa.States.ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void OpenInSimulator_WhenDirty_AndTheUserSaysNo_Replaces()
+    {
+        _main.Session.Document.AddState(new Point2(0, 0));
+
+        _main.Navigation.OpenInSimulator(DfaDocument.CreateEmpty("copy"), "ab");
+
+        _dialogs.Confirms.ShouldBe(1);
+        _main.Session.Document.Name.ShouldBe("copy");
+    }
 }

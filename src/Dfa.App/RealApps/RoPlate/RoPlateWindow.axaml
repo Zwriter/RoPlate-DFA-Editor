@@ -1,0 +1,36 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Dfa.App.RealApps.RoPlate"
+        x:Class="Dfa.App.RealApps.RoPlate.RoPlateWindow"
+        x:DataType="vm:RoPlateViewModel"
+        x:CompileBindings="True"
+        Title="RoPlate"
+        Width="520" SizeToContent="Height" CanResize="False">
+
+    <Window.Styles>
+        <!-- Red (blocked) and green (valid): a thick colored outline plus ✗ / ✓, so not by color alone. -->
+        <Style Selector="TextBox.blocked">
+            <Setter Property="BorderBrush" Value="{DynamicResource Brush.Rejected}" />
+            <Setter Property="BorderThickness" Value="3" />
+        </Style>
+        <Style Selector="TextBox.valid">
+            <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accepted}" />
+            <Setter Property="BorderThickness" Value="3" />
+        </Style>
+    </Window.Styles>
+
+    <StackPanel Margin="16" Spacing="12">
+        <TextBox Text="{Binding Text}" FontSize="32"
+                 Classes.blocked="{Binding IsBlocked}" Classes.valid="{Binding IsValid}" />
+
+        <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="✓" FontWeight="Bold" Foreground="{DynamicResource Brush.Accepted}"
+                       IsVisible="{Binding IsValid}" />
+            <TextBlock Text="✗" FontWeight="Bold" Foreground="{DynamicResource Brush.Rejected}"
+                       IsVisible="{Binding IsBlocked}" />
+            <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <Button Content="Show automaton" Command="{Binding ShowAutomatonCommand}" />
+    </StackPanel>
+</Window>
