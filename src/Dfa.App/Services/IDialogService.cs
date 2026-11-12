@@ -22,6 +22,6 @@ public interface IDialogService
 
     Task<string?> PickSaveFileAsync(string suggestedName);
 
-    // *.png filter (E-08, image export)
+    // *.png or *.svg filter, from suggestedName's extension (E-08, image export)
     Task<string?> PickSaveImageAsync(string suggestedName);
 }

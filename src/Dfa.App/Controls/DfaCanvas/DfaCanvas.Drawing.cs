@@ -86,7 +86,13 @@ public sealed partial class DfaCanvas
     // The canvas is as big as its drawing (plus room for loops and labels), so a ScrollViewer can reach every state.
     protected override Size MeasureOverride(Size availableSize)
     {
-        if (Document is not { Layout.Count: > 0 } document)
+        return Document is { } document ? DrawingSize(document) : default;
+    }
+
+    // Shared with the SVG export, so the image has the same size as the canvas.
+    public static Size DrawingSize(DfaDocument document)
+    {
+        if (document.Layout.Count == 0)
         {
             return default;
         }
@@ -96,26 +102,8 @@ public sealed partial class DfaCanvas
         return new Size(document.Layout.Values.Max(p => p.X) + margin, document.Layout.Values.Max(p => p.Y) + below);
     }
 
-    private EdgeShape ShapeOf(DfaDocument document, Edge edge, IReadOnlyList<Edge> edges)
-    {
-        var from = Center(document, edge.From);
-        var to = Center(document, edge.To);
-        if (edge.From == edge.To)
-        {
-            return CanvasGeometry.Loop(from);
-        }
-
-        var blocked = document.Dfa.States.Any(s =>
-            s != edge.From && s != edge.To && CanvasGeometry.PassesThrough(from, to, Center(document, s)));
-        if (blocked)
-        {
-            return CanvasGeometry.Curved(from, to, CanvasGeometry.AvoidBend);
-        }
-
-        return edges.Any(e => e.From == edge.To && e.To == edge.From)
-            ? CanvasGeometry.Curved(from, to)
-            : CanvasGeometry.Straight(from, to);
-    }
+    private EdgeShape ShapeOf(DfaDocument document, Edge edge, IReadOnlyList<Edge> edges) =>
+        CanvasGeometry.ShapeOf(edge, edges, document.Dfa.States, state => Center(document, state));
 
     // While a state is dragged it is drawn at the mouse; MoveState happens only on release (E-03).
     private Point Center(DfaDocument document, string state)

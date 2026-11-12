@@ -10,7 +10,7 @@ These rules sit under the constitution (`public/docs/constitution.md`) and contr
 
 - **Personality:** warm and editorial; a calm teaching tool.
 - **Feel in one sentence:** an aged cream notebook page written in sepia ink, with dark-brown annotations, where the automaton drawing is the hero.
-- **Signature detail:** the canvas is aged dot-grid paper: `Brush.CanvasDot` dots, 1.2 px, every 18 px (`Size.CanvasDotGap`), on `Brush.Surface`, with a faint edge vignette (`Color.Vignette`). Section titles are set in Fraunces (`Font.Display`). The PNG export stays plain black on white, with no dots and no vignette.
+- **Signature detail:** the canvas is aged dot-grid paper: `Brush.CanvasDot` dots, 1.2 px, every 18 px (`Size.CanvasDotGap`), on `Brush.Surface`, with a faint edge vignette (`Color.Vignette`). Section titles are set in Fraunces (`Font.Display`). The PNG and SVG exports stay plain black on white, with no dots and no vignette.
 - **Never look like:**
   - A generic developer tool: cold blue-gray neutrals, a hard ruled graph-paper grid, steel-blue accents (rejected direction A).
   - A playful consumer app: pill buttons, drop shadows, floating cards, springy or overshoot motion (rejected C).
@@ -171,7 +171,7 @@ None. No `BoxShadow` anywhere. Depth comes from the surface steps (§6). The onl
 
 - **Dark mode** is leather, not black. Surfaces get lighter as they rise: `Bg` < `Surface` < `SurfaceRaised`. Never use `#000` or a neutral gray. Text is cream, never white.
 - **Light mode** is aged paper, not white. `SurfaceRaised` (#FBF5E6) is the lightest color in the app. Never use `#FFF`.
-- **PNG export** is the only place with black on white (`Brushes.Black`, `Brushes.White` in `DfaCanvasImage`). It is deliberate and theme-independent.
+- **PNG and SVG export** are the only places with black on white (`Brushes.Black`, `Brushes.White` in `DfaCanvasImage`; `black`, `white`, `gray` in `DfaCanvasSvg`). It is deliberate and theme-independent.
 
 ## 4. Typography
 
@@ -315,7 +315,7 @@ One shared set of styles (`Classes="table"`, `"table-header"`, `"cell"`):
 - **Strokes:** `Brush.Text` at `Stroke.Edge`. Selected state: dashed ring at +5. Selected edge: `Stroke.LastEdge`. Last edge: `Brush.EdgeLast` at `Stroke.LastEdge`. Current / accepted / rejected: `Stroke.Highlight` outline in `StateCurrent` / `Accepted` / `Rejected`, plus ✓ / ✗ at `FontSize.Verdict` beside the state.
 - **Text:** labels in `Font.Body` `FontSize.CanvasLabel`. Descriptions in `Brush.TextMuted` `FontSize.Caption`, wrapped at 140. The hardcoded `Brushes.Gray` goes away.
 - **Background:** set by the window, not the control. The canvas `ScrollViewer` sits on a `Brush.CanvasPaper` border, with a `Brush.CanvasVignette` overlay on top. The control itself stays transparent, and state circles are unfilled; edges end at the circle, so nothing shows through.
-- **Export** (`DfaCanvasImage`): black on white, no grid, no vignette.
+- **Export** (`DfaCanvasImage`, `DfaCanvasSvg`): black on white, no grid, no vignette.
 
 ### Empty states
 
@@ -399,6 +399,7 @@ One shared set of styles (`Classes="table"`, `"table-header"`, `"cell"`):
 
 - Hardcoded colors (`#…`, `Colors.*`, `Brushes.*`), font sizes, font families, radii, shadows or stroke widths in views and controls. Exceptions:
   - `DfaCanvasImage`: the black-on-white export, including its `Brush.TextMuted` override to gray.
+  - `DfaCanvasSvg`: the same export as SVG; its colors, font family and sizes are SVG attribute strings, each commented with the token it mirrors.
   - `Brushes.Transparent` as a hit-test background.
   - `Brushes.Black` / `Brushes.Transparent` as the fallback passed to `ThemeBrush.Find` or used when `Foreground` is null.
   - Drawn controls (`DfaCanvas`, `InputTape`) may keep geometry, stroke and font-size constants equal to their token, each commented with the token name. Their colors and font families still come from resources.

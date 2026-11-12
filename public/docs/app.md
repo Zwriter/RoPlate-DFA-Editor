@@ -10,7 +10,7 @@ A short guide for whoever adds a panel to the app (P1, P3) or changes the window
 | `MainViewModel.cs` | builds every object by hand and holds the File / Examples / Apps commands |
 | `Services/` | `DocumentSession`, `NavigationService`, `DialogService` and their interfaces |
 | `Themes/Styles.axaml` | the shared brushes from contract 3 (`Brush.StateCurrent`, `Brush.TapeRead`, …) |
-| `Controls/DfaCanvas/` | the drawing: `DfaCanvas` (properties, events), `DfaCanvas.Drawing.cs` (painting), `DfaCanvas.Editing.cs` (mouse and keyboard editing), `DfaCanvas.Highlight.cs` (simulation highlighting), `DfaCanvas.Descriptions.cs` (state descriptions), `DfaCanvasImage` (PNG export), `CanvasGeometry` (arrow math and hit-testing) |
+| `Controls/DfaCanvas/` | the drawing: `DfaCanvas` (properties, events), `DfaCanvas.Drawing.cs` (painting), `DfaCanvas.Editing.cs` (mouse and keyboard editing), `DfaCanvas.Highlight.cs` (simulation highlighting), `DfaCanvas.Descriptions.cs` (state descriptions), `DfaCanvasImage` (PNG export), `DfaCanvasSvg` (SVG export), `CanvasGeometry` (arrow math and hit-testing) |
 | `Controls/InputTape/` | the input tape of the simulation (P3) |
 | `Views/Editor/` | the alphabet and symbol classes: `EditorPanel` + `EditorViewModel` |
 | `Views/TransitionTable/` | the δ table panel (P1) |
@@ -55,11 +55,11 @@ The tab order (Edit, Simulate, Tests) matches the `MainTab` enum: `NavigationSer
 
 | Command | Behaviour |
 |---|---|
-| New, Open, an example | if `IsDirty`, asks `Save changes?` first. **Yes** saves, and the command stops if that save is cancelled or fails; **No** discards |
+| New, Open, an example, closing the window | if `IsDirty`, asks `Save changes?` first. **Yes** saves, and the command stops if that save is cancelled or fails; **No** discards |
 | Open | `DfaJson.LoadFile`; on failure, every error is shown with `ShowErrorsAsync` and the current document stays |
 | Save | saves to `FilePath`, or behaves like Save as when there is none |
 | Save as | asks for a path, then `DfaJson.SaveFile` (atomic); on success sets `FilePath` and clears `IsDirty` |
-| Export as PNG | asks for a `.png` path (`PickSaveImageAsync`), then draws the automaton black on white with `RenderTargetBitmap` |
+| Export as PNG / SVG | one command, `ExportImageCommand` with `"png"` or `"svg"`; `PickSaveImageAsync` offers the filter that matches the suggested name. PNG draws the canvas with `RenderTargetBitmap`; SVG writes the same `CanvasGeometry` shapes as XML. Both are black on white, sized by `DfaCanvas.DrawingSize` |
 
 The window title is `{name} — DFA Simulator`, with `*` after the name while `IsDirty` is true.
 
@@ -91,6 +91,6 @@ All geometry is in `CanvasGeometry` (pure math, tested in `CanvasGeometryTests`)
 | E-05 | highlighting for the simulation | done |
 | E-06 | undo/redo and the trap state in the UI | done |
 | E-07 | state descriptions | done |
-| E-08 | image export (bonus) | done (PNG; SVG not included) |
+| E-08 | image export (bonus) | done (PNG and SVG) |
 
-Known gaps: closing the window does not ask to save.
+Closing the window is the one piece of logic in `MainWindow`'s code-behind: `OnClosing` cancels, awaits `MainViewModel.ConfirmDiscardAsync`, and closes again if allowed (`Closing` cannot await and has no command to bind).
