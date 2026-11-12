@@ -146,4 +146,28 @@ public class SimulatorViewModelTests
         _sim.CurrentState.ShouldBeNull();
         _sim.HighlightKind.ShouldBe(HighlightKind.None);
     }
+
+    [Fact]
+    public void Tape_CursorStandsBelowTheNextSymbol()
+    {
+        _sim.Start("ab");
+        _sim.TapeText.ShouldBe("ab");
+        _sim.CursorPosition.ShouldBe(0);
+
+        _sim.StepForwardCommand.Execute(null);
+
+        _sim.CursorPosition.ShouldBe(1);
+        _sim.ErrorPosition.ShouldBeNull();
+    }
+
+    [Fact]
+    public void Tape_MarksTheBlockingCell()
+    {
+        _sim.Start("acb");
+
+        _sim.RunToEndCommand.Execute(null);
+
+        _sim.ErrorPosition.ShouldBe(1);
+        _sim.CursorPosition.ShouldBe(2);
+    }
 }
