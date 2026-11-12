@@ -1,0 +1,65 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Dfa.App.Views.Simulator"
+             x:Class="Dfa.App.Views.Simulator.ExecutionTable"
+             x:DataType="vm:SimulatorViewModel"
+             x:CompileBindings="True">
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="Margin" Value="4,2" />
+        </Style>
+        <Style Selector="Grid.header > TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <!-- The current row: bold text on a highlighted background, so not by color alone. -->
+        <Style Selector="Border.current">
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
+        </Style>
+        <Style Selector="Border.current TextBlock">
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+    </UserControl.Styles>
+
+    <!-- S-03: Step, Read, (Class, if different), Remaining, State; row 0 = the initial configuration. -->
+    <StackPanel Grid.IsSharedSizeScope="True">
+        <Grid Classes="header">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="Step" />
+                <ColumnDefinition SharedSizeGroup="Read" />
+                <ColumnDefinition SharedSizeGroup="Class" />
+                <ColumnDefinition SharedSizeGroup="Remaining" />
+                <ColumnDefinition SharedSizeGroup="State" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Step" />
+            <TextBlock Grid.Column="1" Text="Read" />
+            <TextBlock Grid.Column="2" Text="Class" IsVisible="{Binding ShowClassColumn}" />
+            <TextBlock Grid.Column="3" Text="Remaining" />
+            <TextBlock Grid.Column="4" Text="State" />
+        </Grid>
+
+        <ItemsControl ItemsSource="{Binding ExecutionRows}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:ExecutionRow">
+                    <Border Classes.current="{Binding IsCurrent}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition SharedSizeGroup="Step" />
+                                <ColumnDefinition SharedSizeGroup="Read" />
+                                <ColumnDefinition SharedSizeGroup="Class" />
+                                <ColumnDefinition SharedSizeGroup="Remaining" />
+                                <ColumnDefinition SharedSizeGroup="State" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding Step}" />
+                            <TextBlock Grid.Column="1" Text="{Binding Read}" />
+                            <TextBlock Grid.Column="2" Text="{Binding Class}"
+                                       IsVisible="{Binding $parent[UserControl].((vm:SimulatorViewModel)DataContext).ShowClassColumn}" />
+                            <TextBlock Grid.Column="3" Text="{Binding Remaining}" />
+                            <TextBlock Grid.Column="4" Text="{Binding State}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>

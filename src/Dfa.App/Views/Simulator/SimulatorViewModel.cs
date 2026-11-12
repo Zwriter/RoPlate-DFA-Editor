@@ -1,6 +1,7 @@
 namespace Dfa.App.Views.Simulator;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -79,6 +80,11 @@ public sealed partial class SimulatorViewModel : ObservableObject
 
     public int? ErrorPosition => Run is { IsBlocked: true, LastStep: { } step } ? step.Position : null;
 
+    // The execution table (S-03); the Class column only for automata with symbol classes.
+    public IReadOnlyList<ExecutionRow> ExecutionRows => Run is null ? [] : ExecutionRow.For(Run);
+
+    public bool ShowClassColumn => _session.Document.Dfa.SymbolClasses.Count > 0;
+
     // The "Guess" mode (S-08) reacts to clicks on the canvas; without it a click does nothing.
     public void OnStateClicked(string state)
     {
@@ -152,6 +158,8 @@ public sealed partial class SimulatorViewModel : ObservableObject
         OnPropertyChanged(nameof(TapeText));
         OnPropertyChanged(nameof(CursorPosition));
         OnPropertyChanged(nameof(ErrorPosition));
+        OnPropertyChanged(nameof(ExecutionRows));
+        OnPropertyChanged(nameof(ShowClassColumn));
         StepForwardCommand.NotifyCanExecuteChanged();
         StepBackCommand.NotifyCanExecuteChanged();
         ResetCommand.NotifyCanExecuteChanged();
