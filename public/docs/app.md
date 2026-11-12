@@ -9,9 +9,13 @@ A short guide for whoever adds a panel to the app (P1, P3) or changes the window
 | `MainWindow.axaml` | the window: menu, drawing, tabs, status bar |
 | `MainViewModel.cs` | builds every object by hand and holds the File / Examples / Apps commands |
 | `Services/` | `DocumentSession`, `NavigationService`, `DialogService` and their interfaces |
-| `Controls/DfaCanvas/` | the drawing: `DfaCanvas` (properties, events), `DfaCanvas.Drawing.cs` (painting), `CanvasGeometry` (arrow math) |
+| `Themes/Styles.axaml` | the shared brushes from contract 3 (`Brush.StateCurrent`, `Brush.TapeRead`, …) |
+| `Controls/DfaCanvas/` | the drawing: `DfaCanvas` (properties, events), `DfaCanvas.Drawing.cs` (painting), `DfaCanvas.Editing.cs` (mouse and keyboard editing), `DfaCanvas.Highlight.cs` (simulation highlighting), `CanvasGeometry` (arrow math and hit-testing) |
+| `Controls/InputTape/` | the input tape of the simulation (P3) |
+| `Views/Editor/` | the alphabet and symbol classes: `EditorPanel` + `EditorViewModel` |
 | `Views/TransitionTable/` | the δ table panel (P1) |
-| `Views/Simulator/` | the simulation panel: `SimulatorPanel` + `SimulatorViewModel` (P3) |
+| `Views/Simulator/` | the simulation panel (`SimulatorPanel`, `SimulatorViewModel`, the execution table) and the batch tests (`BatchTestPanel`, `BatchTestViewModel`) (P3) |
+| `RealApps/RoPlate/` | the RoPlate window: `RoPlateWindow` + `RoPlateViewModel` (P3) |
 
 Controls keep the namespace `Dfa.App.Controls` even inside their own folder (a namespace named after the folder would clash with the class name).
 
@@ -79,13 +83,13 @@ All geometry is in `CanvasGeometry` (pure math, tested in `CanvasGeometryTests`)
 | Task | What | Status |
 |---|---|---|
 | E-00 | UI stubs: session, navigation, dialogs, empty canvas | done |
-| E-01 | main window, File / Examples / Apps menus, title | done (Simulator start and RoPlate window wait for P3) |
+| E-01 | main window, File / Examples / Apps menus, title | done |
 | E-02 | drawing the automaton | done |
-| E-03 | editing on the drawing | not started |
-| E-04 | alphabet and symbol classes | not started |
-| E-05 | highlighting for the simulation | not started |
+| E-03 | editing on the drawing | done |
+| E-04 | alphabet and symbol classes | done |
+| E-05 | highlighting for the simulation | done |
 | E-06 | undo/redo and the trap state in the UI | not started |
 | E-07 | state descriptions | not started |
 | E-08 | image export (bonus) | not started |
 
-Known gaps, marked `shortcut:` in the code: `ShowRoPlate` only shows a status message until `RoPlateWindow` exists. Closing the window does not ask to save.
+Known gaps: closing the window does not ask to save.

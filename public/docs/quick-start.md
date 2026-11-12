@@ -30,7 +30,7 @@ The window opens with an empty automaton called **New automaton**.
 ```
 
 - **The drawing** (left): every state is a circle. A **double circle** is a final state, and the short arrow labelled **start** points at the start state. One arrow joins two states and lists all its symbols (`a, b`). When the two states have arrows both ways, the arrows are drawn as two curves. A loop over a state is a transition back to the same state.
-- **The tabs** (right): **Edit** shows the δ table (`→` start, `*` final, `—` missing transition). The other tabs say "Work in progress" until their panels are ready.
+- **The tabs** (right): **Edit** holds the alphabet, the symbol classes and the δ table (`→` start, `*` final, `—` missing transition); **Simulate** runs a word step by step; **Tests** runs a list of words at once.
 - **The status bar** (bottom): what just happened, for example `Saved C:\automata\even-a.dfa.json`.
 - **The title bar**: the automaton's name, with a `*` while you have unsaved changes.
 
@@ -46,6 +46,7 @@ Choose **Examples ▸ Even number of a**. The automaton appears on the drawing a
 | Contains aba | words that contain `aba` |
 | Binary numbers divisible by 3 | `0`, `11`, `110`, … |
 | Length a multiple of 3 | words of length 0, 3, 6, … |
+| License plate (RoPlate) | Romanian license plates such as `B 123 ABC` and `CJ 12 ABC` |
 
 If you have unsaved changes, the app first asks **Save changes?** Choose **Yes** to save them or **No** to discard them.
 
@@ -60,9 +61,22 @@ If you have unsaved changes, the app first asks **Save changes?** Choose **Yes**
 
 Opening a broken file never crashes the app: you get a list of **every** problem, with the field that caused it, and the automaton you had stays open. The file format is plain JSON you can edit by hand; see [contract 2](plan/contracts/02-json-format.md).
 
-## 5. What is coming
+## 5. Edit, simulate and test
 
-Editing on the drawing (adding states and arrows with the mouse), the simulator, batch tests and the RoPlate license-plate screen are still in progress; see the [team plan](plan/README.md). Until then you can build an automaton by writing its `.dfa.json` by hand and opening it.
+| To… | Do this |
+|---|---|
+| add a symbol or a class | in **Edit**, type it under **Alphabet (Σ)** or **Symbol classes** (ranges such as `A-Z` work) and press **Add** |
+| add a state | click an empty area of the drawing |
+| move a state | drag it |
+| add a transition | Shift + drag from one state to another (or to itself), then type its symbols, e.g. `a,b` |
+| change an arrow's symbols | double-click the arrow |
+| make a state start or final, rename or delete it | right-click it |
+| delete a state or an arrow | click it, then press Delete |
+| run a word | in **Simulate**, type it (empty = ε), press **Start**, then **Step forward**, **Run to end** or **Play** |
+| test many words | in **Tests**, add words with **Add**, tick the ones that should be accepted, press **Run tests**; double-click a row to simulate it |
+| check a license plate | **Apps ▸ RoPlate**, then type a plate; **Show automaton** opens it in the simulator |
+
+Still to come: the animation on the drawing during a simulation, the "Guess" mode, undo/redo and the trap state in the UI, state descriptions and image export; see the [team plan](plan/README.md).
 
 ## Troubleshooting
 

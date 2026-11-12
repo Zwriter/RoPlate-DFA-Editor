@@ -52,7 +52,7 @@ public sealed class InputTape : UserControl
         base.Render(context);
 
         var foreground = Foreground ?? Brushes.Black;
-        var read = Brush("Brush.TapeRead") ?? foreground;
+        var read = ThemeBrush.Find(this, "Brush.TapeRead", foreground);
         var cellPen = new Pen(foreground, 1);
 
         for (var i = 0; i < Text.Length; i++)
@@ -65,11 +65,11 @@ public sealed class InputTape : UserControl
         // The blocking cell: a thick outline, so it is not shown by color alone.
         if (ErrorPosition is { } error && error >= 0 && error < Text.Length)
         {
-            var pen = new Pen(Brush("Brush.Rejected") ?? foreground, 3);
+            var pen = new Pen(ThemeBrush.Find(this, "Brush.Rejected", foreground), 3);
             context.DrawRectangle(null, pen, new Rect(error * CellSize, 0, CellSize, CellSize).Deflate(1.5));
         }
 
-        DrawCursor(context, Brush("Brush.TapeCursor") ?? foreground);
+        DrawCursor(context, ThemeBrush.Find(this, "Brush.TapeCursor", foreground));
     }
 
     // One extra cell of room, so the cursor can stand after the last symbol.
@@ -92,7 +92,4 @@ public sealed class InputTape : UserControl
             isFilled: true);
         context.DrawGeometry(brush, null, geometry);
     }
-
-    private IBrush? Brush(string key) =>
-        this.TryFindResource(key, ActualThemeVariant, out var value) ? value as IBrush : null;
 }
