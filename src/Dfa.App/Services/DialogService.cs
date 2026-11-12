@@ -13,6 +13,7 @@ using Avalonia.Platform.Storage;
 public sealed class DialogService(Window owner) : IDialogService
 {
     private static readonly FilePickerFileType _dfaFileType = new("DFA automaton") { Patterns = ["*.dfa.json"] };
+    private static readonly FilePickerFileType _pngFileType = new("PNG image") { Patterns = ["*.png"] };
 
     public Task ShowErrorAsync(string message) => ShowAsync("Error", Text(message), "OK");
 
@@ -45,14 +46,20 @@ public sealed class DialogService(Window owner) : IDialogService
         return files.Count == 0 ? null : files[0].TryGetLocalPath();
     }
 
-    public async Task<string?> PickSaveFileAsync(string suggestedName)
+    public Task<string?> PickSaveFileAsync(string suggestedName) =>
+        PickSaveAsync("Save automaton", suggestedName, "dfa.json", _dfaFileType);
+
+    public Task<string?> PickSaveImageAsync(string suggestedName) =>
+        PickSaveAsync("Export as PNG", suggestedName, "png", _pngFileType);
+
+    private async Task<string?> PickSaveAsync(string title, string suggestedName, string extension, FilePickerFileType type)
     {
         var file = await owner.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Save automaton",
+            Title = title,
             SuggestedFileName = suggestedName,
-            DefaultExtension = "dfa.json",
-            FileTypeChoices = [_dfaFileType],
+            DefaultExtension = extension,
+            FileTypeChoices = [type],
         });
         return file?.TryGetLocalPath();
     }

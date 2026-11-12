@@ -39,4 +39,6 @@ internal sealed class FakeDialogs : IDialogService
 
     // The first test that needs a save picks the file; a dirty, never-saved document in other tests cancels.
     public Task<string?> PickSaveFileAsync(string suggestedName) => Task.FromResult(PickedFile);
+
+    public Task<string?> PickSaveImageAsync(string suggestedName) => Task.FromResult(PickedFile);
 }

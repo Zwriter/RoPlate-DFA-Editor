@@ -123,6 +123,25 @@ public sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private Task SaveAsAsync() => SaveCoreAsync(null);
 
+    // E-08: the drawing as a PNG image.
+    [RelayCommand]
+    private async Task ExportPngAsync()
+    {
+        if (await _dialogs.PickSaveImageAsync(Session.Document.Name + ".png") is not { } path)
+        {
+            return;
+        }
+
+        var result = DfaCanvasImage.SavePng(Session.Document, path);
+        if (!result.Ok)
+        {
+            await _dialogs.ShowErrorAsync(result.Error!);
+            return;
+        }
+
+        StatusMessage = $"Exported {path}";
+    }
+
     // DfaCanvas.StateClicked goes to the simulator (the "Guess" mode, S-08).
     [RelayCommand]
     private void StateClicked(string state) => Simulator.OnStateClicked(state);
