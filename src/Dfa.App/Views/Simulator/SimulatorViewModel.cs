@@ -85,6 +85,13 @@ public sealed partial class SimulatorViewModel : ObservableObject
 
     public bool ShowClassColumn => _session.Document.Dfa.SymbolClasses.Count > 0;
 
+    // The verdict (S-04): DfaRun.Explanation, with ✓ when accepted and ✗ when rejected.
+    public string Explanation => Run?.Explanation ?? "";
+
+    public bool IsAccepted => Run?.Verdict == Verdict.Accepted;
+
+    public bool IsRejected => Run?.Verdict == Verdict.Rejected;
+
     // The "Guess" mode (S-08) reacts to clicks on the canvas; without it a click does nothing.
     public void OnStateClicked(string state)
     {
@@ -160,6 +167,9 @@ public sealed partial class SimulatorViewModel : ObservableObject
         OnPropertyChanged(nameof(ErrorPosition));
         OnPropertyChanged(nameof(ExecutionRows));
         OnPropertyChanged(nameof(ShowClassColumn));
+        OnPropertyChanged(nameof(Explanation));
+        OnPropertyChanged(nameof(IsAccepted));
+        OnPropertyChanged(nameof(IsRejected));
         StepForwardCommand.NotifyCanExecuteChanged();
         StepBackCommand.NotifyCanExecuteChanged();
         ResetCommand.NotifyCanExecuteChanged();

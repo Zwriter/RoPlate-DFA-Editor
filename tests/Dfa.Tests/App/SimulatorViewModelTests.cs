@@ -170,4 +170,37 @@ public class SimulatorViewModelTests
         _sim.ErrorPosition.ShouldBe(1);
         _sim.CursorPosition.ShouldBe(2);
     }
+
+    [Fact]
+    public void Verdict_InProgress_HasNoSymbol()
+    {
+        _sim.Start("ab");
+        _sim.StepForwardCommand.Execute(null);
+
+        _sim.Explanation.ShouldBe("Step 1 of 2.");
+        _sim.IsAccepted.ShouldBeFalse();
+        _sim.IsRejected.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Verdict_Accepted_ShowsTheCheckMark()
+    {
+        _sim.Start("aa");
+        _sim.RunToEndCommand.Execute(null);
+
+        _sim.Explanation.ShouldBe("ACCEPTED: the word ended in the final state q0.");
+        _sim.IsAccepted.ShouldBeTrue();
+        _sim.IsRejected.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Verdict_Rejected_ShowsTheCross()
+    {
+        _sim.Start("ab");
+        _sim.RunToEndCommand.Execute(null);
+
+        _sim.Explanation.ShouldBe("REJECTED: the word ended in q1, which is not final.");
+        _sim.IsRejected.ShouldBeTrue();
+        _sim.IsAccepted.ShouldBeFalse();
+    }
 }

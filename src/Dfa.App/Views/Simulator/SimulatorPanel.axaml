@@ -31,6 +31,15 @@
             <Button Margin="0,0,4,4" Content="Run to end" Command="{Binding RunToEndCommand}" />
         </WrapPanel>
 
+        <!-- S-04: the verdict, with a green ✓ / red ✗ (symbol + color). -->
+        <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding IsRunning}">
+            <TextBlock Text="✓" FontWeight="Bold" Foreground="{DynamicResource Brush.Accepted}"
+                       IsVisible="{Binding IsAccepted}" />
+            <TextBlock Text="✗" FontWeight="Bold" Foreground="{DynamicResource Brush.Rejected}"
+                       IsVisible="{Binding IsRejected}" />
+            <TextBlock Text="{Binding Explanation}" TextWrapping="Wrap" />
+        </StackPanel>
+
         <vm:ExecutionTable IsVisible="{Binding IsRunning}" />
 
         <TextBlock Text="{Binding Message}" TextWrapping="Wrap"
