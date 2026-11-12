@@ -7,27 +7,35 @@
 
     <UserControl.Styles>
         <Style Selector="Border.cell">
-            <Setter Property="Width" Value="64" />
-            <Setter Property="Padding" Value="4,2" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
-            <Setter Property="BorderThickness" Value="0,0,1,1" />
+            <Setter Property="Width" Value="{DynamicResource Size.DeltaCell}" />
+            <Setter Property="Padding" Value="{DynamicResource Padding.Cell}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border}" />
+            <Setter Property="BorderThickness" Value="{DynamicResource Thickness.CellLines}" />
+        </Style>
+        <Style Selector="Border.cell > TextBlock">
+            <Setter Property="FontFamily" Value="{DynamicResource Font.Mono}" />
+            <Setter Property="FontSize" Value="{DynamicResource FontSize.Small}" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Border.header">
+            <Setter Property="BorderBrush" Value="{DynamicResource Brush.BorderStrong}" />
         </Style>
         <Style Selector="Border.header > TextBlock">
-            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontWeight" Value="{DynamicResource Weight.SemiBold}" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush.TextMuted}" />
         </Style>
         <!-- Missing cells also show "—", so the gap is not conveyed by color alone. -->
         <Style Selector="Border.missing">
             <Setter Property="Background" Value="{DynamicResource Brush.MissingCell}" />
         </Style>
-        <Style Selector="Border.cell > TextBlock">
-            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-        </Style>
     </UserControl.Styles>
 
     <DockPanel>
-        <TextBlock DockPanel.Dock="Top" Margin="0,0,0,4" FontWeight="SemiBold"
-                   Text="Transition table δ   (→ start, * final, — missing)" />
+        <StackPanel DockPanel.Dock="Top" Margin="{DynamicResource Margin.RowGap}">
+            <TextBlock Classes="heading" Text="Transition table δ" />
+            <TextBlock Classes="muted small" Text="→ start · * final · — missing" />
+        </StackPanel>
 
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <StackPanel>

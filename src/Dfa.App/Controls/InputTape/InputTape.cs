@@ -18,15 +18,21 @@ public sealed class InputTape : UserControl
     public static readonly StyledProperty<int?> ErrorPositionProperty =
         AvaloniaProperty.Register<InputTape, int?>(nameof(ErrorPosition));
 
-    private const double CellSize = 32;
+    // Values from the design tokens (DESIGN_RULES.md §2); the font family and size come from the style
+    // (Font.Mono, FontSize.Symbol), the colors from resources.
+    private const double CellSize = 32; // Size.TapeCell
     private const double CursorHeight = 12;
-    private const double SymbolFontSize = 16;
+    private const double ErrorThickness = 3; // Stroke.LastEdge
 
     static InputTape()
     {
-        AffectsRender<InputTape>(TextProperty, CursorPositionProperty, ErrorPositionProperty);
+        AffectsRender<InputTape>(
+            TextProperty, CursorPositionProperty, ErrorPositionProperty, ForegroundProperty, FontFamilyProperty, FontSizeProperty);
         AffectsMeasure<InputTape>(TextProperty);
     }
+
+    // The theme brushes are read while painting, so a theme switch (Settings ▸ Theme) repaints.
+    public InputTape() => ActualThemeVariantChanged += (_, _) => InvalidateVisual();
 
     public string Text
     {
@@ -53,19 +59,20 @@ public sealed class InputTape : UserControl
 
         var foreground = Foreground ?? Brushes.Black;
         var read = ThemeBrush.Find(this, "Brush.TapeRead", foreground);
-        var cellPen = new Pen(foreground, 1);
+        var cellFill = ThemeBrush.Find(this, "Brush.SurfaceRaised", Brushes.Transparent);
+        var cellPen = new Pen(ThemeBrush.Find(this, "Brush.BorderStrong", foreground), 1);
 
         for (var i = 0; i < Text.Length; i++)
         {
             var cell = new Rect(i * CellSize, 0, CellSize, CellSize);
-            context.DrawRectangle(null, cellPen, cell);
+            context.DrawRectangle(cellFill, cellPen, cell);
             DrawCharacter(context, i < CursorPosition ? read : foreground, Text[i] == ' ' ? '␣' : Text[i], cell);
         }
 
         // The blocking cell: a thick outline, so it is not shown by color alone.
         if (ErrorPosition is { } error && error >= 0 && error < Text.Length)
         {
-            var pen = new Pen(ThemeBrush.Find(this, "Brush.Rejected", foreground), 3);
+            var pen = new Pen(ThemeBrush.Find(this, "Brush.Rejected", foreground), ErrorThickness);
             context.DrawRectangle(null, pen, new Rect(error * CellSize, 0, CellSize, CellSize).Deflate(1.5));
         }
 
@@ -79,7 +86,7 @@ public sealed class InputTape : UserControl
     private void DrawCharacter(DrawingContext context, IBrush brush, char c, Rect cell)
     {
         var text = new FormattedText(
-            c.ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface(FontFamily), SymbolFontSize, brush);
+            c.ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface(FontFamily), FontSize, brush);
         context.DrawText(text, cell.Center - new Point(text.Width / 2, text.Height / 2));
     }
 

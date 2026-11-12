@@ -7,21 +7,21 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Dfa.Core.Documents;
 
-// E-07 (SI-10): what each state "remembers", as small gray text below its circle,
+// E-07 (SI-10): what each state "remembers", as small muted text (Brush.TextMuted) below its circle,
 // edited from the state's context menu ("Description…") with SetDescription.
 public sealed partial class DfaCanvas
 {
-    private const double DescriptionFontSize = 11;
+    private const double DescriptionFontSize = 11; // FontSize.Caption
     private const double DescriptionWidth = 140;
     private const double DescriptionGap = 6;
 
     // Room below the lowest states for their descriptions (two or three short lines).
     private const double DescriptionRoom = 48;
 
-    private static void DrawDescription(DrawingContext context, IBrush brush, string text, Point center)
+    private static void DrawDescription(DrawingContext context, IBrush brush, Typeface typeface, string text, Point center)
     {
         var formatted = new FormattedText(
-            text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, Typeface.Default, DescriptionFontSize, brush)
+            text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, DescriptionFontSize, brush)
         {
             MaxTextWidth = DescriptionWidth,
             TextAlignment = TextAlignment.Center,

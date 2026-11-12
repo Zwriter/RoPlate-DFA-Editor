@@ -1,0 +1,322 @@
+<!--
+  Design tokens for RoPlate, theme "Notebook · Old Paper" (DESIGN_RULES.md, public/design/chosen-theme.md).
+
+  Two layers:
+    1. Primitives (Color.*, Space.*): raw values; referenced only inside this file.
+    2. Semantic tokens (Brush.*, Font.*, FontSize.*, Gap.*, Padding.*, Size.*, Radius.*, Stroke.*, Duration.*):
+       the only keys views and controls may use, via {DynamicResource} / {StaticResource} or ThemeBrush.Find.
+
+  The contract 3 keys (Brush.StateCurrent, Brush.Accepted, ...) stay in Themes/Styles.axaml, which merges this file
+  and aliases the contract keys to the same primitives. Control styles live in Themes/Controls.axaml.
+-->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+  <!-- ===================== 1. Primitives ===================== -->
+
+  <!-- Paper (light): aged beige to cream; ink is sepia. -->
+  <Color x:Key="Color.Paper.50">#FBF5E6</Color>
+  <Color x:Key="Color.Paper.100">#F5ECD6</Color>
+  <Color x:Key="Color.Paper.200">#EDE2C8</Color>
+  <Color x:Key="Color.Paper.300">#E6D6B2</Color>
+  <Color x:Key="Color.Paper.400">#DACAA4</Color>
+  <Color x:Key="Color.Paper.600">#8A7652</Color>
+  <Color x:Key="Color.Paper.700">#76633F</Color>
+  <Color x:Key="Color.Paper.800">#5B4830</Color>
+  <Color x:Key="Color.Ink.900">#2E2216</Color>
+
+  <!-- Leather (dark): brown-black surfaces; ink is cream. -->
+  <Color x:Key="Color.Leather.950">#1C1611</Color>
+  <Color x:Key="Color.Leather.900">#241C15</Color>
+  <Color x:Key="Color.Leather.850">#2E241B</Color>
+  <Color x:Key="Color.Leather.800">#3A2C1F</Color>
+  <Color x:Key="Color.Leather.750">#3E3125</Color>
+  <Color x:Key="Color.Leather.500">#847058</Color>
+  <Color x:Key="Color.Cream.500">#9A8768</Color>
+  <Color x:Key="Color.Cream.400">#C2AF8F</Color>
+  <Color x:Key="Color.Cream.100">#F0E4CC</Color>
+
+  <!-- Umber / caramel: the accent ramp (also feeds the Fluent accent). -->
+  <Color x:Key="Color.Umber.800">#4A2C13</Color>
+  <Color x:Key="Color.Umber.700">#5E3818</Color>
+  <Color x:Key="Color.Umber.650">#6B4220</Color>
+  <Color x:Key="Color.Umber.600">#7A4B24</Color>
+  <Color x:Key="Color.Umber.500">#9A6A3F</Color>
+  <Color x:Key="Color.Umber.400">#C49A6E</Color>
+  <Color x:Key="Color.Caramel.300">#D9B48A</Color>
+  <Color x:Key="Color.Caramel.200">#E6C8A3</Color>
+
+  <!-- Status hues. -->
+  <Color x:Key="Color.Olive.600">#3D6A27</Color>
+  <Color x:Key="Color.Olive.300">#9CC27E</Color>
+  <Color x:Key="Color.Sage.100">#E3DFC4</Color>
+  <Color x:Key="Color.Sage.900">#302D20</Color>
+  <Color x:Key="Color.Ochre.600">#875A0A</Color>
+  <Color x:Key="Color.Ochre.300">#E3C35A</Color>
+  <Color x:Key="Color.Oxblood.600">#9E2B3A</Color>
+  <Color x:Key="Color.Oxblood.300">#F09A9A</Color>
+  <Color x:Key="Color.Blush.100">#ECD9C6</Color>
+  <Color x:Key="Color.Blush.900">#382922</Color>
+  <Color x:Key="Color.Rose.100">#F0D6CF</Color>
+  <Color x:Key="Color.Wine.900">#42262A</Color>
+
+  <!-- Spacing scale (4-pt, compact). -->
+  <sys:Double x:Key="Space.1">4</sys:Double>
+  <sys:Double x:Key="Space.1_5">6</sys:Double>
+  <sys:Double x:Key="Space.2">8</sys:Double>
+  <sys:Double x:Key="Space.3">12</sys:Double>
+  <sys:Double x:Key="Space.4">16</sys:Double>
+  <sys:Double x:Key="Space.6">24</sys:Double>
+
+  <!-- ===================== 2. Semantic tokens ===================== -->
+
+  <!-- Color: theme-aware brushes. -->
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="Brush.Bg" Color="{StaticResource Color.Paper.200}" />
+      <SolidColorBrush x:Key="Brush.Surface" Color="{StaticResource Color.Paper.100}" />
+      <SolidColorBrush x:Key="Brush.SurfaceRaised" Color="{StaticResource Color.Paper.50}" />
+      <SolidColorBrush x:Key="Brush.Border" Color="{StaticResource Color.Paper.400}" />
+      <SolidColorBrush x:Key="Brush.BorderStrong" Color="{StaticResource Color.Paper.600}" />
+      <SolidColorBrush x:Key="Brush.Text" Color="{StaticResource Color.Ink.900}" />
+      <SolidColorBrush x:Key="Brush.TextMuted" Color="{StaticResource Color.Paper.800}" />
+      <SolidColorBrush x:Key="Brush.TextSubtle" Color="{StaticResource Color.Paper.700}" />
+      <SolidColorBrush x:Key="Brush.Accent" Color="{StaticResource Color.Umber.600}" />
+      <SolidColorBrush x:Key="Brush.AccentHover" Color="{StaticResource Color.Umber.700}" />
+      <SolidColorBrush x:Key="Brush.AccentContrast" Color="{StaticResource Color.Paper.50}" />
+      <SolidColorBrush x:Key="Brush.AccentSoft" Color="{StaticResource Color.Paper.300}" />
+      <SolidColorBrush x:Key="Brush.Success" Color="{StaticResource Color.Olive.600}" />
+      <SolidColorBrush x:Key="Brush.SuccessSoft" Color="{StaticResource Color.Sage.100}" />
+      <SolidColorBrush x:Key="Brush.Warning" Color="{StaticResource Color.Ochre.600}" />
+      <SolidColorBrush x:Key="Brush.Danger" Color="{StaticResource Color.Oxblood.600}" />
+      <SolidColorBrush x:Key="Brush.DangerSoft" Color="{StaticResource Color.Blush.100}" />
+      <SolidColorBrush x:Key="Brush.OnDanger" Color="{StaticResource Color.Paper.50}" />
+      <SolidColorBrush x:Key="Brush.Info" Color="{StaticResource Color.Umber.600}" />
+      <SolidColorBrush x:Key="Brush.MissingFill" Color="{StaticResource Color.Rose.100}" />
+      <SolidColorBrush x:Key="Brush.FocusRing" Color="{StaticResource Color.Umber.600}" />
+      <SolidColorBrush x:Key="Brush.CanvasDot" Color="{StaticResource Color.Paper.400}" />
+      <Color x:Key="Color.Vignette">#1A7A4B24</Color>
+      <!-- The canvas paper: Surface with a 1.2 px dot every 18 px (Size.CanvasDotGap), tiled. -->
+      <DrawingBrush x:Key="Brush.CanvasPaper" TileMode="Tile" Stretch="None"
+                    SourceRect="0,0,18,18" DestinationRect="0,0,18,18">
+        <DrawingBrush.Drawing>
+          <DrawingGroup>
+            <GeometryDrawing Geometry="M0,0 H18 V18 H0 Z">
+              <GeometryDrawing.Brush>
+                <SolidColorBrush Color="{StaticResource Color.Paper.100}" />
+              </GeometryDrawing.Brush>
+            </GeometryDrawing>
+            <GeometryDrawing>
+              <GeometryDrawing.Brush>
+                <SolidColorBrush Color="{StaticResource Color.Paper.400}" />
+              </GeometryDrawing.Brush>
+              <GeometryDrawing.Geometry>
+                <EllipseGeometry Center="9,9" RadiusX="0.6" RadiusY="0.6" />
+              </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+          </DrawingGroup>
+        </DrawingBrush.Drawing>
+      </DrawingBrush>
+      <!-- Aged-page vignette: clear in the middle, Color.Vignette at the edges. -->
+      <RadialGradientBrush x:Key="Brush.CanvasVignette">
+        <GradientStop Offset="0.55" Color="#007A4B24" />
+        <GradientStop Offset="1" Color="#1A7A4B24" />
+      </RadialGradientBrush>
+      <!-- Fluent bridge (light). -->
+      <SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="{StaticResource Color.Umber.600}" />
+      <SolidColorBrush x:Key="SystemControlFocusVisualSecondaryBrush" Color="{StaticResource Color.Paper.50}" />
+      <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="{StaticResource Color.Paper.50}" />
+      <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{StaticResource Color.Paper.400}" />
+      <SolidColorBrush x:Key="MenuFlyoutItemBackgroundPointerOver" Color="{StaticResource Color.Paper.300}" />
+      <SolidColorBrush x:Key="FlyoutPresenterBackground" Color="{StaticResource Color.Paper.50}" />
+      <SolidColorBrush x:Key="ToolTipBackground" Color="{StaticResource Color.Paper.50}" />
+      <SolidColorBrush x:Key="ToolTipForeground" Color="{StaticResource Color.Ink.900}" />
+      <SolidColorBrush x:Key="ToolTipBorderBrush" Color="{StaticResource Color.Paper.400}" />
+      <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{StaticResource Color.Paper.300}" />
+      <Color x:Key="TextControlSelectionHighlightColor">#7A4B24</Color>
+      <SolidColorBrush x:Key="SliderThumbBackground" Color="{StaticResource Color.Umber.600}" />
+      <SolidColorBrush x:Key="SliderThumbBackgroundPointerOver" Color="{StaticResource Color.Umber.600}" />
+      <SolidColorBrush x:Key="SliderThumbBackgroundPressed" Color="{StaticResource Color.Umber.600}" />
+      <SolidColorBrush x:Key="SliderTrackValueFill" Color="{StaticResource Color.Umber.600}" />
+      <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="{StaticResource Color.Umber.600}" />
+      <SolidColorBrush x:Key="SliderTrackValueFillPressed" Color="{StaticResource Color.Umber.600}" />
+      <SolidColorBrush x:Key="SliderTrackFill" Color="{StaticResource Color.Paper.400}" />
+      <SolidColorBrush x:Key="SliderTrackFillPointerOver" Color="{StaticResource Color.Paper.400}" />
+      <SolidColorBrush x:Key="SliderTrackFillPressed" Color="{StaticResource Color.Paper.400}" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="Brush.Bg" Color="{StaticResource Color.Leather.950}" />
+      <SolidColorBrush x:Key="Brush.Surface" Color="{StaticResource Color.Leather.900}" />
+      <SolidColorBrush x:Key="Brush.SurfaceRaised" Color="{StaticResource Color.Leather.850}" />
+      <SolidColorBrush x:Key="Brush.Border" Color="{StaticResource Color.Leather.750}" />
+      <SolidColorBrush x:Key="Brush.BorderStrong" Color="{StaticResource Color.Leather.500}" />
+      <SolidColorBrush x:Key="Brush.Text" Color="{StaticResource Color.Cream.100}" />
+      <SolidColorBrush x:Key="Brush.TextMuted" Color="{StaticResource Color.Cream.400}" />
+      <SolidColorBrush x:Key="Brush.TextSubtle" Color="{StaticResource Color.Cream.500}" />
+      <SolidColorBrush x:Key="Brush.Accent" Color="{StaticResource Color.Caramel.300}" />
+      <SolidColorBrush x:Key="Brush.AccentHover" Color="{StaticResource Color.Caramel.200}" />
+      <SolidColorBrush x:Key="Brush.AccentContrast" Color="{StaticResource Color.Leather.950}" />
+      <SolidColorBrush x:Key="Brush.AccentSoft" Color="{StaticResource Color.Leather.800}" />
+      <SolidColorBrush x:Key="Brush.Success" Color="{StaticResource Color.Olive.300}" />
+      <SolidColorBrush x:Key="Brush.SuccessSoft" Color="{StaticResource Color.Sage.900}" />
+      <SolidColorBrush x:Key="Brush.Warning" Color="{StaticResource Color.Ochre.300}" />
+      <SolidColorBrush x:Key="Brush.Danger" Color="{StaticResource Color.Oxblood.300}" />
+      <SolidColorBrush x:Key="Brush.DangerSoft" Color="{StaticResource Color.Blush.900}" />
+      <SolidColorBrush x:Key="Brush.OnDanger" Color="{StaticResource Color.Leather.950}" />
+      <SolidColorBrush x:Key="Brush.Info" Color="{StaticResource Color.Caramel.300}" />
+      <SolidColorBrush x:Key="Brush.MissingFill" Color="{StaticResource Color.Wine.900}" />
+      <SolidColorBrush x:Key="Brush.FocusRing" Color="{StaticResource Color.Caramel.300}" />
+      <SolidColorBrush x:Key="Brush.CanvasDot" Color="{StaticResource Color.Leather.750}" />
+      <Color x:Key="Color.Vignette">#59000000</Color>
+      <DrawingBrush x:Key="Brush.CanvasPaper" TileMode="Tile" Stretch="None"
+                    SourceRect="0,0,18,18" DestinationRect="0,0,18,18">
+        <DrawingBrush.Drawing>
+          <DrawingGroup>
+            <GeometryDrawing Geometry="M0,0 H18 V18 H0 Z">
+              <GeometryDrawing.Brush>
+                <SolidColorBrush Color="{StaticResource Color.Leather.900}" />
+              </GeometryDrawing.Brush>
+            </GeometryDrawing>
+            <GeometryDrawing>
+              <GeometryDrawing.Brush>
+                <SolidColorBrush Color="{StaticResource Color.Leather.750}" />
+              </GeometryDrawing.Brush>
+              <GeometryDrawing.Geometry>
+                <EllipseGeometry Center="9,9" RadiusX="0.6" RadiusY="0.6" />
+              </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+          </DrawingGroup>
+        </DrawingBrush.Drawing>
+      </DrawingBrush>
+      <RadialGradientBrush x:Key="Brush.CanvasVignette">
+        <GradientStop Offset="0.55" Color="#00000000" />
+        <GradientStop Offset="1" Color="#59000000" />
+      </RadialGradientBrush>
+      <!-- Fluent bridge (dark). -->
+      <SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="{StaticResource Color.Caramel.300}" />
+      <SolidColorBrush x:Key="SystemControlFocusVisualSecondaryBrush" Color="{StaticResource Color.Leather.950}" />
+      <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="{StaticResource Color.Leather.850}" />
+      <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{StaticResource Color.Leather.750}" />
+      <SolidColorBrush x:Key="MenuFlyoutItemBackgroundPointerOver" Color="{StaticResource Color.Leather.800}" />
+      <SolidColorBrush x:Key="FlyoutPresenterBackground" Color="{StaticResource Color.Leather.850}" />
+      <SolidColorBrush x:Key="ToolTipBackground" Color="{StaticResource Color.Leather.850}" />
+      <SolidColorBrush x:Key="ToolTipForeground" Color="{StaticResource Color.Cream.100}" />
+      <SolidColorBrush x:Key="ToolTipBorderBrush" Color="{StaticResource Color.Leather.750}" />
+      <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{StaticResource Color.Leather.800}" />
+      <Color x:Key="TextControlSelectionHighlightColor">#D9B48A</Color>
+      <SolidColorBrush x:Key="SliderThumbBackground" Color="{StaticResource Color.Caramel.300}" />
+      <SolidColorBrush x:Key="SliderThumbBackgroundPointerOver" Color="{StaticResource Color.Caramel.300}" />
+      <SolidColorBrush x:Key="SliderThumbBackgroundPressed" Color="{StaticResource Color.Caramel.300}" />
+      <SolidColorBrush x:Key="SliderTrackValueFill" Color="{StaticResource Color.Caramel.300}" />
+      <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="{StaticResource Color.Caramel.300}" />
+      <SolidColorBrush x:Key="SliderTrackValueFillPressed" Color="{StaticResource Color.Caramel.300}" />
+      <SolidColorBrush x:Key="SliderTrackFill" Color="{StaticResource Color.Leather.750}" />
+      <SolidColorBrush x:Key="SliderTrackFillPointerOver" Color="{StaticResource Color.Leather.750}" />
+      <SolidColorBrush x:Key="SliderTrackFillPressed" Color="{StaticResource Color.Leather.750}" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+
+  <!-- Fluent bridge: replace the OS accent with the umber / caramel ramp (never show the system accent). -->
+  <Color x:Key="SystemAccentColor">#7A4B24</Color>
+  <Color x:Key="SystemAccentColorDark1">#6B4220</Color>
+  <Color x:Key="SystemAccentColorDark2">#5E3818</Color>
+  <Color x:Key="SystemAccentColorDark3">#4A2C13</Color>
+  <Color x:Key="SystemAccentColorLight1">#9A6A3F</Color>
+  <Color x:Key="SystemAccentColorLight2">#C49A6E</Color>
+  <Color x:Key="SystemAccentColorLight3">#D9B48A</Color>
+
+  <!-- Typography. Inter is registered by .WithInterFont(); Fraunces and IBM Plex Mono are bundled under Assets/Fonts
+       (added in the migration step; until then the system fallbacks after the comma apply). -->
+  <FontFamily x:Key="Font.Body">fonts:Inter#Inter, Segoe UI, sans-serif</FontFamily>
+  <FontFamily x:Key="Font.Display">avares://Dfa.App/Assets/Fonts#Fraunces, Georgia, serif</FontFamily>
+  <FontFamily x:Key="Font.Mono">avares://Dfa.App/Assets/Fonts#IBM Plex Mono, Consolas, monospace</FontFamily>
+  <!-- Fluent bridge: Fluent controls read these instead of the window font. -->
+  <FontFamily x:Key="ContentControlThemeFontFamily">fonts:Inter#Inter, Segoe UI, sans-serif</FontFamily>
+  <sys:Double x:Key="ControlContentThemeFontSize">13</sys:Double>
+  <sys:Double x:Key="TabItemHeaderFontSize">13</sys:Double>
+
+  <sys:Double x:Key="FontSize.Caption">11</sys:Double>
+  <sys:Double x:Key="FontSize.Small">12</sys:Double>
+  <sys:Double x:Key="FontSize.Body">13</sys:Double>
+  <sys:Double x:Key="FontSize.CanvasLabel">14</sys:Double>
+  <sys:Double x:Key="FontSize.Heading">15</sys:Double>
+  <sys:Double x:Key="FontSize.Title">16</sys:Double>
+  <sys:Double x:Key="FontSize.Symbol">16</sys:Double>
+  <sys:Double x:Key="FontSize.Verdict">20</sys:Double>
+  <sys:Double x:Key="FontSize.Plate">28</sys:Double>
+
+  <FontWeight x:Key="Weight.Regular">Normal</FontWeight>
+  <FontWeight x:Key="Weight.Medium">Medium</FontWeight>
+  <FontWeight x:Key="Weight.SemiBold">SemiBold</FontWeight>
+  <FontWeight x:Key="Weight.Bold">Bold</FontWeight>
+
+  <!-- Spacing (semantic). Doubles for Spacing / ColumnSpacing, Thickness for Margin / Padding. -->
+  <StaticResource x:Key="Gap.Inline" ResourceKey="Space.1" />
+  <StaticResource x:Key="Gap.Related" ResourceKey="Space.1_5" />
+  <StaticResource x:Key="Gap.Group" ResourceKey="Space.2" />
+  <StaticResource x:Key="Gap.Section" ResourceKey="Space.3" />
+  <StaticResource x:Key="Gap.EmptyState" ResourceKey="Space.6" />
+
+  <Thickness x:Key="Padding.Panel">8</Thickness>
+  <Thickness x:Key="Padding.Window">16</Thickness>
+  <Thickness x:Key="Padding.Control">10,0</Thickness>
+  <Thickness x:Key="Padding.Tab">10,6</Thickness>
+  <Thickness x:Key="Padding.Cell">6,3</Thickness>
+  <Thickness x:Key="Padding.StatusBar">10,4</Thickness>
+  <Thickness x:Key="Padding.Chip">8,2,4,2</Thickness>
+  <Thickness x:Key="Padding.Verdict">8</Thickness>
+  <Thickness x:Key="Margin.RowGap">0,0,0,4</Thickness>
+  <Thickness x:Key="Margin.WrapGap">0,0,4,4</Thickness>
+  <Thickness x:Key="Margin.SectionTop">0,12,0,0</Thickness>
+  <Thickness x:Key="Margin.SectionBottom">0,0,0,12</Thickness>
+  <Thickness x:Key="Padding.Input">8,4</Thickness>
+  <Thickness x:Key="Margin.MarkGap">0,0,6,0</Thickness>
+  <Thickness x:Key="Margin.Separator">6,0</Thickness>
+  <Thickness x:Key="Padding.Kbd">5,0</Thickness>
+
+  <!-- Border thicknesses (Stroke.* as Thickness, for BorderThickness). -->
+  <Thickness x:Key="Thickness.Hairline">1</Thickness>
+  <Thickness x:Key="Thickness.Emphasis">2</Thickness>
+  <Thickness x:Key="Thickness.LastEdge">3</Thickness>
+  <Thickness x:Key="Thickness.Top">0,1,0,0</Thickness>
+  <Thickness x:Key="Thickness.Bottom">0,0,0,1</Thickness>
+  <Thickness x:Key="Thickness.Right">0,0,1,0</Thickness>
+  <Thickness x:Key="Thickness.CellLines">0,0,1,1</Thickness>
+  <Thickness x:Key="Thickness.CurrentBar">3,0,0,0</Thickness>
+  <Thickness x:Key="Thickness.Kbd">1,1,1,2</Thickness>
+
+  <!-- Sizes. -->
+  <sys:Double x:Key="Size.Control">28</sys:Double>
+  <sys:Double x:Key="Size.Icon">16</sys:Double>
+  <sys:Double x:Key="Size.CheckBox">16</sys:Double>
+  <sys:Double x:Key="Size.ChipButton">18</sys:Double>
+  <sys:Double x:Key="Size.TapeCell">32</sys:Double>
+  <GridLength x:Key="Size.SidePanel">380</GridLength>
+  <sys:Double x:Key="Size.Splitter">6</sys:Double>
+  <sys:Double x:Key="Size.CanvasDotGap">18</sys:Double>
+  <sys:Double x:Key="Size.DeltaCell">64</sys:Double>
+  <sys:Double x:Key="Size.Separator">18</sys:Double>
+  <sys:Double x:Key="Size.GhostState">56</sys:Double> <!-- 2 × the state radius 28 (contract 3) -->
+  <sys:Double x:Key="Size.GripDot">3</sys:Double>
+  <sys:Double x:Key="Size.CaptionButton">46</sys:Double>
+  <sys:Double x:Key="Size.CaptionIcon">10</sys:Double>
+  <sys:Double x:Key="Size.TitleBar">36</sys:Double>
+
+  <!-- Radius. -->
+  <CornerRadius x:Key="Radius.Small">4</CornerRadius>
+  <CornerRadius x:Key="Radius.Control">6</CornerRadius>
+  <CornerRadius x:Key="Radius.Panel">8</CornerRadius>
+
+  <!-- Stroke widths (canvas values are contract 3 §5). -->
+  <sys:Double x:Key="Stroke.Hairline">1</sys:Double>
+  <sys:Double x:Key="Stroke.Edge">1.5</sys:Double>
+  <sys:Double x:Key="Stroke.Emphasis">2</sys:Double>
+  <sys:Double x:Key="Stroke.LastEdge">3</sys:Double>
+  <sys:Double x:Key="Stroke.Highlight">4</sys:Double>
+
+  <!-- Motion. No elevation tokens: the theme uses no shadows. -->
+  <sys:TimeSpan x:Key="Duration.Fast">0:0:0.14</sys:TimeSpan>
+  <sys:TimeSpan x:Key="Duration.Base">0:0:0.2</sys:TimeSpan>
+  <SplineEasing x:Key="Easing.Standard" X1="0.3" Y1="0" X2="0.2" Y2="1" />
+</ResourceDictionary>

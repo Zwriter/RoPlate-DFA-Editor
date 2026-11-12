@@ -20,6 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Bundled fonts (SIL OFL): Fraunces for titles, IBM Plex Mono for symbols (DESIGN_RULES.md §2). -->
+    <AvaloniaResource Include="Assets\Fonts\*.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Dfa.Core\Dfa.Core.csproj" />
   </ItemGroup>
 </Project>

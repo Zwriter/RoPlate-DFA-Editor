@@ -6,16 +6,9 @@
              x:DataType="vm:EditorViewModel"
              x:CompileBindings="True">
 
-    <UserControl.Styles>
-        <Style Selector="TextBlock.error">
-            <Setter Property="Foreground" Value="{DynamicResource Brush.Rejected}" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-        </Style>
-    </UserControl.Styles>
-
-    <!-- E-04: the Σ list and the symbol classes; OpResult errors below the field. -->
-    <StackPanel Spacing="6">
-        <TextBlock FontWeight="SemiBold" Text="Alphabet (Σ)" />
+    <!-- E-04: the Σ list and the symbol classes; OpResult errors below the field (✗ + red border, not color alone). -->
+    <StackPanel Spacing="{DynamicResource Gap.Related}">
+        <TextBlock Classes="heading" Text="Alphabet (Σ)" />
         <ItemsControl ItemsSource="{Binding Symbols}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -24,52 +17,62 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="x:String">
-                    <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,8,4">
-                        <TextBlock Text="{Binding}" VerticalAlignment="Center" />
-                        <Button Content="Remove"
-                                Command="{Binding $parent[UserControl].((vm:EditorViewModel)DataContext).RemoveSymbolCommand}"
-                                CommandParameter="{Binding}" />
-                    </StackPanel>
+                    <Border Classes="chip">
+                        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Gap.Inline}">
+                            <TextBlock Classes="mono" Text="{Binding}" VerticalAlignment="Center" />
+                            <Button Classes="ghost chip-remove" Content="×" ToolTip.Tip="Remove"
+                                    AutomationProperties.Name="{Binding StringFormat='Remove symbol {0}'}"
+                                    Command="{Binding $parent[UserControl].((vm:EditorViewModel)DataContext).RemoveSymbolCommand}"
+                                    CommandParameter="{Binding}" />
+                        </StackPanel>
+                    </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-            <TextBox Text="{Binding NewSymbol}" PlaceholderText="e.g. a" MaxLength="1">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Gap.Related}">
+            <TextBox Classes="mono" Text="{Binding NewSymbol}" PlaceholderText="e.g. a" MaxLength="1"
+                     AutomationProperties.Name="New symbol"
+                     Classes.error="{Binding SymbolError, Converter={x:Static ObjectConverters.IsNotNull}}">
                 <TextBox.KeyBindings>
                     <KeyBinding Gesture="Enter" Command="{Binding AddSymbolCommand}" />
                 </TextBox.KeyBindings>
             </TextBox>
             <Button Grid.Column="1" Content="Add" Command="{Binding AddSymbolCommand}" />
         </Grid>
-        <TextBlock Classes="error" Text="{Binding SymbolError}"
+        <TextBlock Classes="field-error" Text="{Binding SymbolError, StringFormat='✗ {0}'}"
                    IsVisible="{Binding SymbolError, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
-        <TextBlock FontWeight="SemiBold" Text="Symbol classes" Margin="0,8,0,0" />
+        <TextBlock Classes="heading" Text="Symbol classes" Margin="{DynamicResource Margin.SectionTop}" />
         <ItemsControl ItemsSource="{Binding Classes}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="model:SymbolClass">
-                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" Margin="0,0,0,4">
-                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Text="{Binding Characters}" VerticalAlignment="Center"
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Gap.Group}"
+                          Margin="{DynamicResource Margin.RowGap}">
+                        <TextBlock Classes="strong" Text="{Binding Name}" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="mono muted" Text="{Binding Characters}" VerticalAlignment="Center"
                                    TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Characters}" />
-                        <Button Grid.Column="2" Content="Remove"
+                        <Button Grid.Column="2" Classes="ghost chip-remove" Content="×" ToolTip.Tip="Remove"
+                                AutomationProperties.Name="{Binding Name, StringFormat='Remove class {0}'}"
                                 Command="{Binding $parent[UserControl].((vm:EditorViewModel)DataContext).RemoveClassCommand}"
                                 CommandParameter="{Binding}" />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="8">
-            <TextBox Text="{Binding NewClassName}" PlaceholderText="Name" />
+        <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="{DynamicResource Gap.Related}">
+            <TextBox Text="{Binding NewClassName}" PlaceholderText="Name" AutomationProperties.Name="Class name"
+                     Classes.error="{Binding ClassError, Converter={x:Static ObjectConverters.IsNotNull}}" />
             <!-- Help for ranges: "A-Z" ⇒ SymbolClass.FromRanges. -->
-            <TextBox Grid.Column="1" Text="{Binding NewClassCharacters}" PlaceholderText="Characters, e.g. A-Z or 0-9">
+            <TextBox Grid.Column="1" Classes="mono" Text="{Binding NewClassCharacters}"
+                     PlaceholderText="Characters, e.g. A-Z or 0-9" AutomationProperties.Name="Class characters"
+                     Classes.error="{Binding ClassError, Converter={x:Static ObjectConverters.IsNotNull}}">
                 <TextBox.KeyBindings>
                     <KeyBinding Gesture="Enter" Command="{Binding AddClassCommand}" />
                 </TextBox.KeyBindings>
             </TextBox>
             <Button Grid.Column="2" Content="Add" Command="{Binding AddClassCommand}" />
         </Grid>
-        <TextBlock Classes="error" Text="{Binding ClassError}"
+        <TextBlock Classes="field-error" Text="{Binding ClassError, StringFormat='✗ {0}'}"
                    IsVisible="{Binding ClassError, Converter={x:Static ObjectConverters.IsNotNull}}" />
     </StackPanel>
 </UserControl>

@@ -8,27 +8,33 @@
              x:CompileBindings="True">
 
     <!-- S-07 (SI-08): word + "expected accepted" check, Run tests, ✓ / ✗ on every row, the summary. -->
-    <DockPanel Margin="8">
-        <StackPanel DockPanel.Dock="Bottom" Spacing="8" Margin="0,8,0,0">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Bottom" Spacing="{DynamicResource Gap.Group}" Margin="{DynamicResource Margin.SectionTop}">
             <WrapPanel>
-                <Button Margin="0,0,4,4" Content="Add" Command="{Binding AddCommand}" />
-                <Button Margin="0,0,4,4" Content="Run tests" Command="{Binding RunTestsCommand}" />
+                <Button Margin="{DynamicResource Margin.WrapGap}" Content="Add" Command="{Binding AddCommand}" />
+                <Button Margin="{DynamicResource Margin.WrapGap}" Classes="primary" Content="Run tests"
+                        Command="{Binding RunTestsCommand}" />
             </WrapPanel>
-            <TextBlock Text="{Binding Summary}"
+            <TextBlock Classes="small" Text="{Binding Summary}"
                        IsVisible="{Binding Summary, Converter={x:Static ObjectConverters.IsNotNull}}" />
         </StackPanel>
 
-        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,24,Auto" ColumnSpacing="8" Margin="0,0,0,4">
-            <TextBlock Grid.Column="0" FontWeight="SemiBold" Text="Word" />
-            <TextBlock Grid.Column="1" FontWeight="SemiBold" Text="Expected accepted" />
-        </Grid>
+        <Border DockPanel.Dock="Top" Classes="table-header" Margin="{DynamicResource Margin.RowGap}">
+            <Grid ColumnDefinitions="*,Auto,24,Auto" ColumnSpacing="{DynamicResource Gap.Group}" Margin="{DynamicResource Padding.Cell}">
+                <TextBlock Grid.Column="0" Classes="th" Text="Word" />
+                <TextBlock Grid.Column="1" Classes="th" Text="Expected accepted" />
+            </Grid>
+        </Border>
+
+        <!-- Empty state: what the tab is for. -->
+        <TextBlock DockPanel.Dock="Top" Classes="muted" TextWrapping="Wrap" IsVisible="{Binding !Rows.Count}"
+                   Text="Add a word, tick whether it should be accepted, then Run tests." />
 
         <ScrollViewer>
             <ItemsControl ItemsSource="{Binding Rows}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vm:BatchTestRow">
-                        <Grid ColumnDefinitions="*,Auto,24,Auto" ColumnSpacing="8" Margin="0,0,0,4"
-                              Background="Transparent">
+                        <Border Classes="table-row" Padding="{DynamicResource Padding.Cell}" Background="Transparent">
                             <!-- Double-click on a row opens the word in the simulator. -->
                             <i:Interaction.Behaviors>
                                 <ia:EventTriggerBehavior EventName="DoubleTapped">
@@ -37,16 +43,18 @@
                                         CommandParameter="{Binding}" />
                                 </ia:EventTriggerBehavior>
                             </i:Interaction.Behaviors>
-                            <TextBox Grid.Column="0" Text="{Binding Word}" PlaceholderText="ε" />
-                            <CheckBox Grid.Column="1" IsChecked="{Binding Expected}" HorizontalAlignment="Center" />
-                            <TextBlock Grid.Column="2" Text="✓" FontWeight="Bold" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource Brush.Accepted}" IsVisible="{Binding IsPassed}" />
-                            <TextBlock Grid.Column="2" Text="✗" FontWeight="Bold" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource Brush.Rejected}" IsVisible="{Binding IsFailed}" />
-                            <Button Grid.Column="3" Content="Remove"
-                                    Command="{Binding $parent[UserControl].((vm:BatchTestViewModel)DataContext).RemoveCommand}"
-                                    CommandParameter="{Binding}" />
-                        </Grid>
+                            <Grid ColumnDefinitions="*,Auto,24,Auto" ColumnSpacing="{DynamicResource Gap.Group}">
+                                <TextBox Grid.Column="0" Classes="mono" Text="{Binding Word}" PlaceholderText="ε"
+                                         AutomationProperties.Name="Word" />
+                                <CheckBox Grid.Column="1" IsChecked="{Binding Expected}" HorizontalAlignment="Center"
+                                          AutomationProperties.Name="Expected accepted" />
+                                <TextBlock Grid.Column="2" Classes="mark ok" Text="✓" IsVisible="{Binding IsPassed}" />
+                                <TextBlock Grid.Column="2" Classes="mark no" Text="✗" IsVisible="{Binding IsFailed}" />
+                                <Button Grid.Column="3" Classes="ghost" Content="Remove"
+                                        Command="{Binding $parent[UserControl].((vm:BatchTestViewModel)DataContext).RemoveCommand}"
+                                        CommandParameter="{Binding}" />
+                            </Grid>
+                        </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

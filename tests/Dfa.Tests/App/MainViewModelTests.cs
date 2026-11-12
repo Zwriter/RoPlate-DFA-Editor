@@ -13,7 +13,7 @@ public sealed class MainViewModelTests : IDisposable
     private readonly MainViewModel _main;
     private readonly string _dir = Directory.CreateTempSubdirectory("roplate-").FullName;
 
-    public MainViewModelTests() => _main = new MainViewModel(_dialogs);
+    public MainViewModelTests() => _main = new MainViewModel(_dialogs, new FakeThemeService());
 
     public void Dispose() => Directory.Delete(_dir, recursive: true);
 

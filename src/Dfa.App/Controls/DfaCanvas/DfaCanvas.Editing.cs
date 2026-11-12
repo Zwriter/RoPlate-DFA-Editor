@@ -66,8 +66,12 @@ public sealed partial class DfaCanvas
         }
         else if (point.IsLeftButtonPressed)
         {
+            // A click on an empty area clears the selection; a double-click there adds a state.
             Select(null, null);
-            Report(document.AddState(new Point2(p.X, p.Y)));
+            if (e.ClickCount == 2)
+            {
+                Report(document.AddState(new Point2(p.X, p.Y)));
+            }
         }
     }
 

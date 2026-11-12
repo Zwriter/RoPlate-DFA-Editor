@@ -42,7 +42,7 @@ Until P1 finishes the engine (week 1), build test documents directly in code; af
 
 ### E-03 · Editing on the drawing
 - **Week:** 3 · **Requirements:** ED-01…ED-04 · **Depends on:** E-02, C-05
-- Click on an empty area ⇒ `AddState(position)`.
+- Double-click on an empty area ⇒ `AddState(position)`; a single click there only clears the selection.
 - Drag & drop ⇒ visual move while dragging; `MoveState` **only when the mouse is released** (a single undo step).
 - Selection + the Delete key ⇒ `RemoveState` / `RemoveEdge`.
 - Context menu on a state: Start state, Final state (check), Rename (`AskTextAsync`), Delete.
