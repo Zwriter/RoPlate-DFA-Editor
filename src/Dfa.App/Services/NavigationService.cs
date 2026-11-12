@@ -1,5 +1,6 @@
 namespace Dfa.App.Services;
 
+using Dfa.App.RealApps.RoPlate;
 using Dfa.Core.Documents;
 
 public sealed class NavigationService(MainViewModel main, DocumentSession session) : INavigationService
@@ -13,6 +14,5 @@ public sealed class NavigationService(MainViewModel main, DocumentSession sessio
         main.Simulator.Start(input);
     }
 
-    // shortcut: no RoPlateWindow yet, open it here once P3's R-02 is merged.
-    public void ShowRoPlate() => main.StatusMessage = "RoPlate: work in progress.";
+    public void ShowRoPlate() => new RoPlateWindow { DataContext = new RoPlateViewModel(this) }.Show();
 }
