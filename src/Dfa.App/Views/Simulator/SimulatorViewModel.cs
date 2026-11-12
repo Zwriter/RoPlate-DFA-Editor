@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Dfa.App.Controls;
 using Dfa.App.Services;
@@ -17,6 +18,7 @@ public sealed partial class SimulatorViewModel : ObservableObject
 
     private readonly DocumentSession _session;
     private readonly IDialogService _dialogs;
+    private DispatcherTimer? _timer;
 
     [ObservableProperty]
     private string _input = "";
@@ -27,6 +29,14 @@ public sealed partial class SimulatorViewModel : ObservableObject
 
     [ObservableProperty]
     private string? _message;
+
+    // Play / Pause (S-05): the time between two steps, in milliseconds.
+    [ObservableProperty]
+    private double _interval = 1000;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
+    private bool _isPlaying;
 
     public SimulatorViewModel(DocumentSession session, IDialogService dialogs)
     {
@@ -117,6 +127,7 @@ public sealed partial class SimulatorViewModel : ObservableObject
 
     public void Stop()
     {
+        Pause();
         Run = null;
         Message = null;
     }
@@ -136,9 +147,45 @@ public sealed partial class SimulatorViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanStepForward))]
     private void RunToEnd() => Run?.RunToEnd();
 
+    [RelayCommand(CanExecute = nameof(CanPlayPause))]
+    private void PlayPause()
+    {
+        if (IsPlaying)
+        {
+            Pause();
+            return;
+        }
+
+        if (_timer is null)
+        {
+            _timer = new DispatcherTimer();
+            _timer.Tick += (_, _) => Run?.StepForward();
+        }
+
+        _timer.Interval = TimeSpan.FromMilliseconds(Interval);
+        _timer.Start();
+        IsPlaying = true;
+    }
+
+    private bool CanPlayPause() => IsPlaying || CanStepForward();
+
+    private void Pause()
+    {
+        _timer?.Stop();
+        IsPlaying = false;
+    }
+
     private bool CanStepForward() => !IsAtEnd;
 
     private bool CanStepBack() => !IsAtStart;
+
+    partial void OnIntervalChanged(double value)
+    {
+        if (_timer is not null)
+        {
+            _timer.Interval = TimeSpan.FromMilliseconds(value);
+        }
+    }
 
     partial void OnRunChanged(DfaRun? oldValue, DfaRun? newValue)
     {
@@ -174,5 +221,12 @@ public sealed partial class SimulatorViewModel : ObservableObject
         StepBackCommand.NotifyCanExecuteChanged();
         ResetCommand.NotifyCanExecuteChanged();
         RunToEndCommand.NotifyCanExecuteChanged();
+        PlayPauseCommand.NotifyCanExecuteChanged();
+
+        // Playing stops by itself at the end.
+        if (IsPlaying && IsAtEnd)
+        {
+            Pause();
+        }
     }
 }

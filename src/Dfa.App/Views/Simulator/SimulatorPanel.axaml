@@ -29,7 +29,17 @@
             <Button Margin="0,0,4,4" Content="Step back" Command="{Binding StepBackCommand}" />
             <Button Margin="0,0,4,4" Content="Reset" Command="{Binding ResetCommand}" />
             <Button Margin="0,0,4,4" Content="Run to end" Command="{Binding RunToEndCommand}" />
+            <!-- S-05: Play / Pause. -->
+            <Button Margin="0,0,4,4" Command="{Binding PlayPauseCommand}">
+                <Panel>
+                    <TextBlock Text="Play" IsVisible="{Binding !IsPlaying}" />
+                    <TextBlock Text="Pause" IsVisible="{Binding IsPlaying}" />
+                </Panel>
+            </Button>
         </WrapPanel>
+
+        <!-- S-05: the speed slider (100–2000 ms) bound to the timer's Interval. -->
+        <Slider Minimum="100" Maximum="2000" Value="{Binding Interval}" />
 
         <!-- S-04: the verdict, with a green ✓ / red ✗ (symbol + color). -->
         <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding IsRunning}">
