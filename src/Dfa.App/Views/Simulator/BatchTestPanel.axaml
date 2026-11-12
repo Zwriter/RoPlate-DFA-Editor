@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Dfa.App.Views.Simulator"
+             xmlns:i="using:Avalonia.Xaml.Interactivity"
+             xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
+             x:Class="Dfa.App.Views.Simulator.BatchTestPanel"
+             x:DataType="vm:BatchTestViewModel"
+             x:CompileBindings="True">
+
+    <!-- S-07 (SI-08): word + "expected accepted" check, Run tests, ✓ / ✗ on every row, the summary. -->
+    <DockPanel Margin="8">
+        <StackPanel DockPanel.Dock="Bottom" Spacing="8" Margin="0,8,0,0">
+            <WrapPanel>
+                <Button Margin="0,0,4,4" Content="Add" Command="{Binding AddCommand}" />
+                <Button Margin="0,0,4,4" Content="Run tests" Command="{Binding RunTestsCommand}" />
+            </WrapPanel>
+            <TextBlock Text="{Binding Summary}"
+                       IsVisible="{Binding Summary, Converter={x:Static ObjectConverters.IsNotNull}}" />
+        </StackPanel>
+
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,24,Auto" ColumnSpacing="8" Margin="0,0,0,4">
+            <TextBlock Grid.Column="0" FontWeight="SemiBold" Text="Word" />
+            <TextBlock Grid.Column="1" FontWeight="SemiBold" Text="Expected accepted" />
+        </Grid>
+
+        <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding Rows}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:BatchTestRow">
+                        <Grid ColumnDefinitions="*,Auto,24,Auto" ColumnSpacing="8" Margin="0,0,0,4"
+                              Background="Transparent">
+                            <!-- Double-click on a row opens the word in the simulator. -->
+                            <i:Interaction.Behaviors>
+                                <ia:EventTriggerBehavior EventName="DoubleTapped">
+                                    <ia:InvokeCommandAction
+                                        Command="{Binding $parent[UserControl].((vm:BatchTestViewModel)DataContext).OpenInSimulatorCommand}"
+                                        CommandParameter="{Binding}" />
+                                </ia:EventTriggerBehavior>
+                            </i:Interaction.Behaviors>
+                            <TextBox Grid.Column="0" Text="{Binding Word}" PlaceholderText="ε" />
+                            <CheckBox Grid.Column="1" IsChecked="{Binding Expected}" HorizontalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Text="✓" FontWeight="Bold" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource Brush.Accepted}" IsVisible="{Binding IsPassed}" />
+                            <TextBlock Grid.Column="2" Text="✗" FontWeight="Bold" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource Brush.Rejected}" IsVisible="{Binding IsFailed}" />
+                            <Button Grid.Column="3" Content="Remove"
+                                    Command="{Binding $parent[UserControl].((vm:BatchTestViewModel)DataContext).RemoveCommand}"
+                                    CommandParameter="{Binding}" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>
