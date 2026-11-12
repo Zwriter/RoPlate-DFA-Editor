@@ -101,6 +101,10 @@ public sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void ShowRoPlate() => Navigation.ShowRoPlate();
 
+    // DfaCanvas.StatusMessage (contract 3): errors and info while editing.
+    [RelayCommand]
+    private void ShowStatus(string text) => StatusMessage = text;
+
     // Returns false when the current document must be kept (unsaved changes and the save was cancelled or failed).
     // Also used by NavigationService.OpenInSimulator ("Show automaton" from RoPlate).
     public async Task<bool> ConfirmDiscardAsync() =>

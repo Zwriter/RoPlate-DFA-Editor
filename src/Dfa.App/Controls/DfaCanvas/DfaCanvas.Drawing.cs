@@ -28,13 +28,21 @@ public sealed partial class DfaCanvas
 
         foreach (var edge in edges)
         {
-            DrawEdge(context, pen, brush, ShapeOf(document, edge, edges), string.Join(", ", edge.Symbols));
+            // The selected arrow (E-03) is drawn thicker, so the selection is not shown by color alone.
+            var edgePen = _selectedEdge == new EdgeRef(edge.From, edge.To) ? new Pen(brush, 3) : pen;
+            DrawEdge(context, edgePen, brush, ShapeOf(document, edge, edges), SymbolList.Format(edge.Symbols));
         }
 
         foreach (var state in dfa.States)
         {
             var center = Center(document, state);
             context.DrawEllipse(null, pen, center, CanvasGeometry.Radius, CanvasGeometry.Radius);
+            if (state == SelectedState)
+            {
+                var dashed = new Pen(brush, 1.5) { DashStyle = DashStyle.Dash };
+                context.DrawEllipse(null, dashed, center, CanvasGeometry.Radius + 5, CanvasGeometry.Radius + 5);
+            }
+
             if (dfa.IsFinal(state))
             {
                 context.DrawEllipse(null, pen, center, CanvasGeometry.FinalRadius, CanvasGeometry.FinalRadius);
@@ -50,6 +58,12 @@ public sealed partial class DfaCanvas
             var label = begin - new Vector(0, LabelFontSize);
             DrawEdge(context, pen, brush, new EdgeShape(begin, begin, end, end, label), "start");
         }
+
+        // Shift + drag: the new transition follows the mouse until it is released on a state.
+        if (_link is { } link)
+        {
+            context.DrawLine(new Pen(brush, 1.5) { DashStyle = DashStyle.Dash }, Center(document, link.From), link.To);
+        }
     }
 
     // The canvas is as big as its drawing (plus room for loops and labels), so a ScrollViewer can reach every state.
@@ -64,7 +78,7 @@ public sealed partial class DfaCanvas
         return new Size(document.Layout.Values.Max(p => p.X) + margin, document.Layout.Values.Max(p => p.Y) + margin);
     }
 
-    private static EdgeShape ShapeOf(DfaDocument document, Edge edge, IReadOnlyList<Edge> edges)
+    private EdgeShape ShapeOf(DfaDocument document, Edge edge, IReadOnlyList<Edge> edges)
     {
         var from = Center(document, edge.From);
         var to = Center(document, edge.To);
@@ -85,8 +99,16 @@ public sealed partial class DfaCanvas
             : CanvasGeometry.Straight(from, to);
     }
 
-    private static Point Center(DfaDocument document, string state) =>
-        document.Layout.TryGetValue(state, out var p) ? new Point(p.X, p.Y) : default;
+    // While a state is dragged it is drawn at the mouse; MoveState happens only on release (E-03).
+    private Point Center(DfaDocument document, string state)
+    {
+        if (_drag is { } drag && drag.State == state)
+        {
+            return drag.Position;
+        }
+
+        return document.Layout.TryGetValue(state, out var p) ? new Point(p.X, p.Y) : default;
+    }
 
     private static void DrawEdge(DrawingContext context, Pen pen, IBrush brush, EdgeShape shape, string label)
     {

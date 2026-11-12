@@ -16,6 +16,8 @@ public static class CanvasGeometry
     private const double LabelGap = 12;
     private const double ArrowLength = 10;
     private const double ArrowHalfWidth = 5;
+    private const double EdgeHitDistance = 6;
+    private const int EdgeSamples = 32;
 
     // Arrows start and end on the circles, along the direction between the centers.
     public static EdgeShape Straight(Point from, Point to)
@@ -67,6 +69,36 @@ public static class CanvasGeometry
         var back = edge.End - (d * ArrowLength);
         var n = Normal(d) * ArrowHalfWidth;
         return (edge.End, back + n, back - n);
+    }
+
+    // E-03 hit-testing: a click inside the circle is on the state.
+    public static bool HitsState(Point center, Point p) => ((Vector)(p - center)).Length <= Radius;
+
+    // A click near the curve (or on its label) is on the arrow.
+    public static bool HitsEdge(EdgeShape edge, Point p)
+    {
+        if (((Vector)(p - edge.Label)).Length <= EdgeHitDistance * 2)
+        {
+            return true;
+        }
+
+        for (var i = 0; i <= EdgeSamples; i++)
+        {
+            if (((Vector)(p - PointOn(edge, (double)i / EdgeSamples))).Length <= EdgeHitDistance)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static Point PointOn(EdgeShape e, double t)
+    {
+        var u = 1 - t;
+        return new Point(
+            (u * u * u * e.Start.X) + (3 * u * u * t * e.Control1.X) + (3 * u * t * t * e.Control2.X) + (t * t * t * e.End.X),
+            (u * u * u * e.Start.Y) + (3 * u * u * t * e.Control1.Y) + (3 * u * t * t * e.Control2.Y) + (t * t * t * e.End.Y));
     }
 
     private static Point Mid(Point a, Point b) => new((a.X + b.X) / 2, (a.Y + b.Y) / 2);
