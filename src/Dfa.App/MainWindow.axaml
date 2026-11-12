@@ -59,11 +59,19 @@
 
     <Grid ColumnDefinitions="*,4,380">
       <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <controls:DfaCanvas Document="{Binding Session.Document}">
+        <!-- S-06: the simulation is shown on the drawing (contract 3, section 6). -->
+        <controls:DfaCanvas Document="{Binding Session.Document}"
+                            Mode="{Binding CurrentCanvasMode}"
+                            HighlightedState="{Binding Simulator.CurrentState}"
+                            HighlightKind="{Binding Simulator.HighlightKind}"
+                            HighlightedEdge="{Binding Simulator.LastEdge}">
           <!-- Editing errors (e.g. the ED-04 message) go to the status bar. -->
           <i:Interaction.Behaviors>
             <ia:EventTriggerBehavior EventName="StatusMessage">
               <ia:InvokeCommandAction Command="{Binding ShowStatusCommand}" />
+            </ia:EventTriggerBehavior>
+            <ia:EventTriggerBehavior EventName="StateClicked">
+              <ia:InvokeCommandAction Command="{Binding StateClickedCommand}" />
             </ia:EventTriggerBehavior>
           </i:Interaction.Behaviors>
         </controls:DfaCanvas>
