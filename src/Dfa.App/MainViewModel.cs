@@ -136,16 +136,18 @@ public sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private Task SaveAsAsync() => SaveCoreAsync(null);
 
-    // E-08: the drawing as a PNG image.
+    // E-08: the drawing as an image; format is "png" or "svg" (the menu's CommandParameter).
     [RelayCommand]
-    private async Task ExportPngAsync()
+    private async Task ExportImageAsync(string format)
     {
-        if (await _dialogs.PickSaveImageAsync(Session.Document.Name + ".png") is not { } path)
+        if (await _dialogs.PickSaveImageAsync($"{Session.Document.Name}.{format}") is not { } path)
         {
             return;
         }
 
-        var result = DfaCanvasImage.SavePng(Session.Document, path);
+        var result = format == "svg"
+            ? DfaCanvasSvg.SaveSvg(Session.Document, path)
+            : DfaCanvasImage.SavePng(Session.Document, path);
         if (!result.Ok)
         {
             await _dialogs.ShowErrorAsync(result.Error!);

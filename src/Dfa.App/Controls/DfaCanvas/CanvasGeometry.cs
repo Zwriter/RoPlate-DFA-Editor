@@ -1,7 +1,10 @@
 namespace Dfa.App.Controls;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
+using Dfa.Core.Model;
 
 // Pure geometry of the drawing (contract 3, visual conventions), kept apart from painting so it can be tested.
 public static class CanvasGeometry
@@ -26,6 +29,25 @@ public static class CanvasGeometry
         var start = from + (d * Radius);
         var end = to - (d * Radius);
         return new EdgeShape(start, start, end, end, Mid(start, end) + (Normal(d) * LabelGap));
+    }
+
+    // Which shape an arrow gets: a loop, bent around a state in the way, two arcs for both directions, or straight.
+    // Shared by the canvas (which passes the dragged position) and the SVG export.
+    public static EdgeShape ShapeOf(Edge edge, IReadOnlyList<Edge> edges, IEnumerable<string> states, Func<string, Point> center)
+    {
+        var from = center(edge.From);
+        var to = center(edge.To);
+        if (edge.From == edge.To)
+        {
+            return Loop(from);
+        }
+
+        if (states.Any(s => s != edge.From && s != edge.To && PassesThrough(from, to, center(s))))
+        {
+            return Curved(from, to, AvoidBend);
+        }
+
+        return edges.Any(e => e.From == edge.To && e.To == edge.From) ? Curved(from, to) : Straight(from, to);
     }
 
     // True when the straight arrow from → to would cross the circle of another state.

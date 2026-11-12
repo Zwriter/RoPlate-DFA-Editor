@@ -193,11 +193,24 @@ public sealed class MainViewModelTests : IDisposable
     }
 
     [Fact]
-    public async Task ExportPng_Cancelled_DoesNothing()
+    public async Task ExportImage_Cancelled_DoesNothing()
     {
-        await _main.ExportPngCommand.ExecuteAsync(null);
+        await _main.ExportImageCommand.ExecuteAsync("png");
 
         _dialogs.Errors.ShouldBeEmpty();
         _main.StatusMessage.ShouldBe("Ready");
+    }
+
+    [Fact]
+    public async Task ExportSvg_WritesTheDrawing_AndDoesNotTouchTheDocument()
+    {
+        await _main.OpenExampleCommand.ExecuteAsync(ExampleCatalog.All[0]);
+        _dialogs.PickedFile = Path.Combine(_dir, "a.svg");
+
+        await _main.ExportImageCommand.ExecuteAsync("svg");
+
+        System.Xml.Linq.XDocument.Load(_dialogs.PickedFile).Root!.Name.LocalName.ShouldBe("svg");
+        _main.StatusMessage.ShouldBe($"Exported {_dialogs.PickedFile}");
+        _main.Session.IsDirty.ShouldBeFalse();
     }
 }

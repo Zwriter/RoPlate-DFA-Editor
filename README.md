@@ -26,7 +26,7 @@
 
 It ships with a real-world app built on the same engine: **RoPlate**, a Romanian license-plate checker. The plate format is a 14-state automaton, and the checker validates a plate as you type. It tells you what it expects next ("waiting for 3 letters") and can open the automaton so you can see exactly where an input got stuck.
 
-> **Status:** the engine (`Dfa.Core`) is complete and fully tested. The main window, the File and Examples menus, the drawing, editing on the drawing, the alphabet and symbol classes, the step-by-step simulator (input tape, execution table, verdict, Play / Pause), batch tests, the RoPlate screen, the animation on the drawing during a simulation, the "Guess" mode, undo/redo, the trap state, state descriptions and PNG export work. Not included yet: SVG export, and closing the window does not ask to save. See the [team plan](public/docs/plan/README.md).
+> **Status:** the engine (`Dfa.Core`) is complete and fully tested. The main window, the File and Examples menus, the drawing, editing on the drawing, the alphabet and symbol classes, the step-by-step simulator (input tape, execution table, verdict, Play / Pause), batch tests, the RoPlate screen, the animation on the drawing during a simulation, the "Guess" mode, undo/redo, the trap state, state descriptions and PNG / SVG export work, and closing the window with unsaved changes asks to save. What is left are two bonus items: editable δ table cells (ED-11) and the word generator in the UI (SI-11). See the [team plan](public/docs/plan/README.md).
 
 ## Contents
 

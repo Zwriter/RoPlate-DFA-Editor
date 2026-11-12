@@ -59,6 +59,7 @@ If you have unsaved changes, the app first asks **Save changes?** Choose **Yes**
 | **File ▸ Save** | Ctrl+S | saves to the current file (asks for a name the first time) |
 | **File ▸ Save as…** | Ctrl+Shift+S | saves under a new name |
 | **File ▸ Export as PNG…** | | saves the drawing as an image |
+| **File ▸ Export as SVG…** | | saves the drawing as a vector image (sharp at any size, editable in Inkscape or a browser) |
 
 Opening a broken file never crashes the app: you get a list of **every** problem, with the field that caused it, and the automaton you had stays open. The file format is plain JSON you can edit by hand; see [contract 2](plan/contracts/02-json-format.md).
 
@@ -81,7 +82,7 @@ Opening a broken file never crashes the app: you get a list of **every** problem
 | test many words | in **Tests**, add words with **Add**, tick the ones that should be accepted, press **Run tests**; double-click a row to simulate it |
 | check a license plate | **Apps ▸ RoPlate**, then type a plate; **Show automaton** opens it in the simulator |
 
-Not included yet: SVG export, and closing the window does not ask to save; see the [team plan](plan/README.md).
+Closing the window with unsaved changes asks **Save changes?**, like New and Open. See the [team plan](plan/README.md) for what is left.
 
 ## Troubleshooting
 

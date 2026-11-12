@@ -39,7 +39,8 @@
               <MenuItem Header="_Open…" InputGesture="Ctrl+O" Command="{Binding OpenCommand}" />
               <MenuItem Header="_Save" InputGesture="Ctrl+S" Command="{Binding SaveCommand}" />
               <MenuItem Header="Save _as…" InputGesture="Ctrl+Shift+S" Command="{Binding SaveAsCommand}" />
-              <MenuItem Header="_Export as PNG…" Command="{Binding ExportPngCommand}" />
+              <MenuItem Header="_Export as PNG…" Command="{Binding ExportImageCommand}" CommandParameter="png" />
+              <MenuItem Header="Export as S_VG…" Command="{Binding ExportImageCommand}" CommandParameter="svg" />
               <Separator />
               <!-- Settings: the color theme (follow the OS, light, dark), remembered between runs. -->
               <MenuItem Header="Se_ttings">

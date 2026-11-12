@@ -1,5 +1,6 @@
 namespace Dfa.App.Services;
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ public sealed class DialogService(Window owner) : IDialogService
 {
     private static readonly FilePickerFileType _dfaFileType = new("DFA automaton") { Patterns = ["*.dfa.json"] };
     private static readonly FilePickerFileType _pngFileType = new("PNG image") { Patterns = ["*.png"] };
+    private static readonly FilePickerFileType _svgFileType = new("SVG image") { Patterns = ["*.svg"] };
 
     public Task ShowErrorAsync(string message) => ShowAsync("Error", Text(message), "OK");
 
@@ -49,8 +51,11 @@ public sealed class DialogService(Window owner) : IDialogService
     public Task<string?> PickSaveFileAsync(string suggestedName) =>
         PickSaveAsync("Save automaton", suggestedName, "dfa.json", _dfaFileType);
 
+    // The format follows the suggested name's extension: "name.svg" offers SVG, anything else PNG.
     public Task<string?> PickSaveImageAsync(string suggestedName) =>
-        PickSaveAsync("Export as PNG", suggestedName, "png", _pngFileType);
+        suggestedName.EndsWith(".svg", StringComparison.OrdinalIgnoreCase)
+            ? PickSaveAsync("Export as SVG", suggestedName, "svg", _svgFileType)
+            : PickSaveAsync("Export as PNG", suggestedName, "png", _pngFileType);
 
     private async Task<string?> PickSaveAsync(string title, string suggestedName, string extension, FilePickerFileType type)
     {
