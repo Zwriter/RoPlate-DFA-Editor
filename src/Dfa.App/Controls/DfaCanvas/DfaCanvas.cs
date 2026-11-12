@@ -1,9 +1,11 @@
 namespace Dfa.App.Controls;
 
 using System;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
+using Avalonia.Media;
 using Dfa.Core.Documents;
 
 // Properties and events from contract 3; painting is in DfaCanvas.Drawing.cs, editing comes in E-03.
@@ -29,8 +31,15 @@ public sealed partial class DfaCanvas : UserControl
 
     static DfaCanvas()
     {
-        AffectsRender<DfaCanvas>(DocumentProperty);
+        AffectsRender<DfaCanvas>(DocumentProperty, SelectedStateProperty);
         AffectsMeasure<DfaCanvas>(DocumentProperty);
+    }
+
+    public DfaCanvas()
+    {
+        // A background, so clicks on empty areas reach the canvas (E-03), and focus for the Delete key.
+        Background = Brushes.Transparent;
+        Focusable = true;
     }
 
     public event EventHandler<string>? StateClicked;
@@ -92,6 +101,13 @@ public sealed partial class DfaCanvas : UserControl
 
     private void OnDocumentChanged(object? sender, DocumentChangedEventArgs e)
     {
+        // The selection may point at something that was just removed (Delete, undo, a replaced document).
+        if (SelectedState is { } state && Document?.Dfa.States.Contains(state) != true)
+        {
+            SelectedState = null;
+        }
+
+        _selectedEdge = null;
         InvalidateMeasure();
         InvalidateVisual();
     }

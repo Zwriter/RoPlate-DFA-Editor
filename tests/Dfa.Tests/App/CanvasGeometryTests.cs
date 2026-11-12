@@ -76,6 +76,24 @@ public class CanvasGeometryTests
         double.IsFinite(CanvasGeometry.ArrowHead(edge).Left.Y).ShouldBeTrue();
     }
 
+    [Fact]
+    public void HitsState_InsideTheCircleOnly()
+    {
+        CanvasGeometry.HitsState(_a, _a + new Vector(CanvasGeometry.Radius - 1, 0)).ShouldBeTrue();
+        CanvasGeometry.HitsState(_a, _a + new Vector(CanvasGeometry.Radius + 1, 0)).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HitsEdge_NearTheCurveOrTheLabel_NotFarAway()
+    {
+        var edge = CanvasGeometry.Curved(_a, _b);
+
+        CanvasGeometry.HitsEdge(edge, edge.Start).ShouldBeTrue();
+        CanvasGeometry.HitsEdge(edge, edge.End + new Vector(0, 3)).ShouldBeTrue();
+        CanvasGeometry.HitsEdge(edge, edge.Label).ShouldBeTrue();
+        CanvasGeometry.HitsEdge(edge, new Point(_a.X, _b.Y + 100)).ShouldBeFalse();
+    }
+
     // Which side of the line a→b a point lies on (sign of the cross product).
     private static int Side(Point p) => Math.Sign(((_b.X - _a.X) * (p.Y - _a.Y)) - ((_b.Y - _a.Y) * (p.X - _a.X)));
 }

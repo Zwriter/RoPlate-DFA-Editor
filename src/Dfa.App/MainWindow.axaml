@@ -4,6 +4,8 @@
         xmlns:controls="using:Dfa.App.Controls"
         xmlns:examples="using:Dfa.Core.Examples"
         xmlns:simulator="using:Dfa.App.Views.Simulator"
+        xmlns:i="using:Avalonia.Xaml.Interactivity"
+        xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
         xmlns:table="using:Dfa.App.Views.TransitionTable"
         x:Class="Dfa.App.MainWindow"
         x:DataType="app:MainViewModel"
@@ -56,7 +58,14 @@
 
     <Grid ColumnDefinitions="*,4,380">
       <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <controls:DfaCanvas Document="{Binding Session.Document}" />
+        <controls:DfaCanvas Document="{Binding Session.Document}">
+          <!-- Editing errors (e.g. the ED-04 message) go to the status bar. -->
+          <i:Interaction.Behaviors>
+            <ia:EventTriggerBehavior EventName="StatusMessage">
+              <ia:InvokeCommandAction Command="{Binding ShowStatusCommand}" />
+            </ia:EventTriggerBehavior>
+          </i:Interaction.Behaviors>
+        </controls:DfaCanvas>
       </ScrollViewer>
       <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
       <TabControl Grid.Column="2" SelectedIndex="{Binding SelectedTabIndex}">
