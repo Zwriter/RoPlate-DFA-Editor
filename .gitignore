@@ -6,3 +6,5 @@ obj/
 TestResults/
 coverage/
 desktop.ini
+# Uncompressed showcase recording (127 MB, over GitHub's 100 MB limit); public/showcase.mp4 is the compressed copy.
+public/Roplate_showcase.mp4

@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using Dfa.App.Controls;
 using Dfa.App.Services;
 using Dfa.App.Views.Editor;
+using Dfa.App.Views.Settings;
 using Dfa.App.Views.Simulator;
 using Dfa.App.Views.TransitionTable;
 using Dfa.Core.Documents;
@@ -27,9 +28,10 @@ public sealed partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string _statusMessage = "Ready";
 
-    public MainViewModel(IDialogService dialogs)
+    public MainViewModel(IDialogService dialogs, IThemeService theme)
     {
         _dialogs = dialogs;
+        Settings = new SettingsViewModel(theme);
         Navigation = new NavigationService(this, Session);
         Editor = new EditorViewModel(Session, dialogs);
         Table = new TransitionTableViewModel(Session);
@@ -50,7 +52,12 @@ public sealed partial class MainViewModel : ObservableObject
         };
 
         Session.PropertyChanged += OnSessionPropertyChanged;
-        Session.DocumentReplaced += (_, _) => OnPropertyChanged(nameof(Title));
+        Session.DocumentReplaced += (_, _) =>
+        {
+            OnPropertyChanged(nameof(Title));
+            OnPropertyChanged(nameof(IsDocumentEmpty));
+        };
+        Session.DocumentEdited += (_, _) => OnPropertyChanged(nameof(IsDocumentEmpty));
         Session.History.Changed += (_, _) =>
         {
             UndoCommand.NotifyCanExecuteChanged();
@@ -74,7 +81,13 @@ public sealed partial class MainViewModel : ObservableObject
 
     public BatchTestViewModel BatchTests { get; }
 
+    // Settings ▸ Theme (light / dark / follow the OS), remembered between runs.
+    public SettingsViewModel Settings { get; }
+
     public IReadOnlyList<ExampleInfo> Examples => ExampleCatalog.All;
+
+    // No states yet: the canvas shows its empty state (how to add a state and a transition).
+    public bool IsDocumentEmpty => Session.Document.Dfa.States.Count == 0;
 
     public string Title => $"{Session.Document.Name}{(Session.IsDirty ? "*" : "")} — DFA Simulator";
 

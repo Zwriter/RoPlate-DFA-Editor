@@ -9,9 +9,9 @@ using Dfa.Core.Model;
 // a thick outline in the theme's color, plus ✓ / ✗ next to an accepted / rejected state.
 public sealed partial class DfaCanvas
 {
-    private const double HighlightThickness = 4;
-    private const double LastEdgeThickness = 3;
-    private const double VerdictFontSize = 20;
+    private const double HighlightThickness = 4; // Stroke.Highlight (contract 3)
+    private const double LastEdgeThickness = 3; // Stroke.LastEdge
+    private const double VerdictFontSize = 20; // FontSize.Verdict
 
     // The theme brush and the mark (contract 3, visual conventions) for each kind of highlight.
     public static (string BrushKey, string? Mark) HighlightStyle(HighlightKind kind) => kind switch
@@ -39,7 +39,7 @@ public sealed partial class DfaCanvas
         if (mark is not null)
         {
             var text = new FormattedText(
-                mark, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, Typeface.Default, VerdictFontSize, brush);
+                mark, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface(FontFamily, FontStyle.Normal, FontWeight.Bold), VerdictFontSize, brush);
             context.DrawText(text, center + new Vector(CanvasGeometry.Radius, -CanvasGeometry.Radius - (text.Height / 2)));
         }
     }

@@ -67,7 +67,7 @@ Opening a broken file never crashes the app: you get a list of **every** problem
 | To… | Do this |
 |---|---|
 | add a symbol or a class | in **Edit**, type it under **Alphabet (Σ)** or **Symbol classes** (ranges such as `A-Z` work) and press **Add** |
-| add a state | click an empty area of the drawing |
+| add a state | double-click an empty area of the drawing |
 | move a state | drag it |
 | add a transition | Shift + drag from one state to another (or to itself), then type its symbols, e.g. `a,b` |
 | change an arrow's symbols | double-click the arrow |

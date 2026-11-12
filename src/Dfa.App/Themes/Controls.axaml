@@ -1,0 +1,429 @@
+<!--
+  Control styles for the "Notebook · Old Paper" theme (DESIGN_RULES.md §7), applied after FluentTheme.
+  Only semantic tokens from Tokens.axaml are used here; views pick variants with Classes.
+-->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:Dfa.App.Controls">
+
+  <Styles.Resources>
+    <!-- Icons (Material Design Icons, Apache 2.0), drawn at Size.Icon. -->
+    <StreamGeometry x:Key="Icon.Undo">M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z</StreamGeometry>
+    <StreamGeometry x:Key="Icon.Minimize">M0,7 H16 V8 H0 Z</StreamGeometry>
+    <StreamGeometry x:Key="Icon.Maximize">M0,0 H16 V16 H0 Z M1,1 V15 H15 V1 Z</StreamGeometry>
+    <StreamGeometry x:Key="Icon.Restore">M3,0 H16 V13 H13 V12 H15 V1 H4 V3 H3 Z M0,3 H13 V16 H0 Z M1,4 V15 H12 V4 Z</StreamGeometry>
+    <StreamGeometry x:Key="Icon.Close">M0.7,0 L8,7.3 L15.3,0 L16,0.7 L8.7,8 L16,15.3 L15.3,16 L8,8.7 L0.7,16 L0,15.3 L7.3,8 L0,0.7 Z</StreamGeometry>
+    <StreamGeometry x:Key="Icon.Redo">M18.4,10.6C16.55,9 14.15,8 11.5,8C6.85,8 2.92,11.03 1.54,15.22L3.9,16C4.95,12.81 7.95,10.5 11.5,10.5C13.45,10.5 15.23,11.22 16.62,12.38L13,16H22V7L18.4,10.6Z</StreamGeometry>
+
+    <!-- The verdict line (§7): ✓ / ✗ + the contract message in a status box; plain text while no verdict. -->
+    <ControlTheme x:Key="{x:Type controls:VerdictLine}" TargetType="controls:VerdictLine">
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Name="PART_Box" CornerRadius="{DynamicResource Radius.Control}">
+            <Grid ColumnDefinitions="Auto,*">
+              <TextBlock Name="PART_Mark" IsVisible="False" VerticalAlignment="Top" Margin="{DynamicResource Margin.MarkGap}"
+                         FontSize="{DynamicResource FontSize.Verdict}" FontWeight="{DynamicResource Weight.Bold}" />
+              <TextBlock Grid.Column="1" Text="{TemplateBinding Text}" TextWrapping="Wrap" VerticalAlignment="Center" />
+            </Grid>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:accepted /template/ Border#PART_Box, ^:rejected /template/ Border#PART_Box">
+        <Setter Property="Padding" Value="{DynamicResource Padding.Verdict}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource Thickness.Hairline}" />
+      </Style>
+      <Style Selector="^:accepted /template/ Border#PART_Box">
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Success}" />
+        <Setter Property="Background" Value="{DynamicResource Brush.SuccessSoft}" />
+      </Style>
+      <Style Selector="^:accepted /template/ TextBlock#PART_Mark">
+        <Setter Property="IsVisible" Value="True" />
+        <Setter Property="Text" Value="✓" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Success}" />
+      </Style>
+      <Style Selector="^:rejected /template/ Border#PART_Box">
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Danger}" />
+        <Setter Property="Background" Value="{DynamicResource Brush.DangerSoft}" />
+      </Style>
+      <Style Selector="^:rejected /template/ TextBlock#PART_Mark">
+        <Setter Property="IsVisible" Value="True" />
+        <Setter Property="Text" Value="✗" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Danger}" />
+      </Style>
+    </ControlTheme>
+    <!-- Caption buttons (minimize / maximize-restore / close) for the app-drawn title bar. -->
+    <ControlTheme x:Key="{x:Type controls:CaptionButtons}" TargetType="controls:CaptionButtons">
+      <Setter Property="Template">
+        <ControlTemplate>
+          <StackPanel Orientation="Horizontal">
+            <Button Name="PART_Minimize" Classes="caption" IsVisible="{TemplateBinding CanMinimize}"
+                    ToolTip.Tip="Minimize" AutomationProperties.Name="Minimize">
+              <PathIcon Data="{DynamicResource Icon.Minimize}" />
+            </Button>
+            <Button Name="PART_Maximize" Classes="caption" IsVisible="{TemplateBinding CanMaximize}"
+                    ToolTip.Tip="Maximize" AutomationProperties.Name="Maximize">
+              <PathIcon Data="{DynamicResource Icon.Maximize}" />
+            </Button>
+            <Button Name="PART_Close" Classes="caption close"
+                    ToolTip.Tip="Close" AutomationProperties.Name="Close">
+              <PathIcon Data="{DynamicResource Icon.Close}" />
+            </Button>
+          </StackPanel>
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:maximized /template/ Button#PART_Maximize">
+        <Setter Property="ToolTip.Tip" Value="Restore" />
+        <Setter Property="AutomationProperties.Name" Value="Restore" />
+      </Style>
+      <Style Selector="^:maximized /template/ Button#PART_Maximize PathIcon">
+        <Setter Property="Data" Value="{DynamicResource Icon.Restore}" />
+      </Style>
+    </ControlTheme>
+  </Styles.Resources>
+
+  <!-- ===== Windows and text ===== -->
+  <Style Selector="Window">
+    <Setter Property="Background" Value="{DynamicResource Brush.Bg}" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Text}" />
+    <Setter Property="FontFamily" Value="{DynamicResource Font.Body}" />
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Body}" />
+  </Style>
+  <Style Selector="TextBlock.heading">
+    <Setter Property="FontFamily" Value="{DynamicResource Font.Display}" />
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Heading}" />
+    <Setter Property="FontWeight" Value="{DynamicResource Weight.SemiBold}" />
+  </Style>
+  <Style Selector="TextBlock.title">
+    <Setter Property="FontFamily" Value="{DynamicResource Font.Display}" />
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Title}" />
+    <Setter Property="FontWeight" Value="{DynamicResource Weight.SemiBold}" />
+  </Style>
+  <Style Selector="TextBlock.muted">
+    <Setter Property="Foreground" Value="{DynamicResource Brush.TextMuted}" />
+  </Style>
+  <Style Selector="TextBlock.small">
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Small}" />
+  </Style>
+  <Style Selector="TextBlock.strong">
+    <Setter Property="FontWeight" Value="{DynamicResource Weight.SemiBold}" />
+  </Style>
+  <Style Selector="TextBlock.mono">
+    <Setter Property="FontFamily" Value="{DynamicResource Font.Mono}" />
+  </Style>
+  <Style Selector="TextBox.mono">
+    <Setter Property="FontFamily" Value="{DynamicResource Font.Mono}" />
+  </Style>
+  <Style Selector="TextBlock.field-error">
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Danger}" />
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Small}" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+  <!-- ✓ / ✗ marks in lists: symbol + color, never color alone. -->
+  <Style Selector="TextBlock.mark">
+    <Setter Property="FontWeight" Value="{DynamicResource Weight.Bold}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+  <Style Selector="TextBlock.mark.ok">
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Success}" />
+  </Style>
+  <Style Selector="TextBlock.mark.no">
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Danger}" />
+  </Style>
+  <Style Selector="TextBlock.th">
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Small}" />
+    <Setter Property="FontWeight" Value="{DynamicResource Weight.SemiBold}" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.TextMuted}" />
+  </Style>
+
+  <!-- ===== Buttons: secondary (default), primary, ghost, icon, chip-remove ===== -->
+  <Style Selector="Button">
+    <Setter Property="Background" Value="{DynamicResource Brush.SurfaceRaised}" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Text}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.BorderStrong}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Thickness.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Radius.Control}" />
+    <Setter Property="Padding" Value="{DynamicResource Padding.Control}" />
+    <Setter Property="MinHeight" Value="{DynamicResource Size.Control}" />
+    <Setter Property="FontWeight" Value="{DynamicResource Weight.Medium}" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+  <!-- Duration.Fast (0:0:0.14). Transitions are outside the resource tree, so the value is written here. -->
+  <Style Selector="Button /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.14" />
+        <BrushTransition Property="BorderBrush" Duration="0:0:0.14" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource Brush.SurfaceRaised}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Text}" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Text}" />
+  </Style>
+  <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource Brush.AccentSoft}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Text}" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Text}" />
+  </Style>
+
+  <Style Selector="Button.primary">
+    <Setter Property="Background" Value="{DynamicResource Brush.Accent}" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.AccentContrast}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent}" />
+  </Style>
+  <Style Selector="Button.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter, Button.primary:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource Brush.AccentHover}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.AccentHover}" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.AccentContrast}" />
+  </Style>
+
+  <Style Selector="Button.ghost">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.TextMuted}" />
+  </Style>
+  <Style Selector="Button.ghost:pointerover /template/ ContentPresenter#PART_ContentPresenter, Button.ghost:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource Brush.AccentSoft}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Text}" />
+  </Style>
+
+  <Style Selector="Button.icon">
+    <Setter Property="Width" Value="{DynamicResource Size.Control}" />
+    <Setter Property="Height" Value="{DynamicResource Size.Control}" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+  </Style>
+  <Style Selector="Button.icon PathIcon">
+    <Setter Property="Width" Value="{DynamicResource Size.Icon}" />
+    <Setter Property="Height" Value="{DynamicResource Size.Icon}" />
+  </Style>
+  <Style Selector="Button.chip-remove">
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Width" Value="{DynamicResource Size.ChipButton}" />
+    <Setter Property="Height" Value="{DynamicResource Size.ChipButton}" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Radius.Small}" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+  </Style>
+
+  <!-- Caption buttons: flat, full title-bar height; close turns Danger on hover. -->
+  <Style Selector="Button.caption">
+    <Setter Property="Width" Value="{DynamicResource Size.CaptionButton}" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="VerticalAlignment" Value="Stretch" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Text}" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+  <Style Selector="Button.caption PathIcon">
+    <Setter Property="Width" Value="{DynamicResource Size.CaptionIcon}" />
+    <Setter Property="Height" Value="{DynamicResource Size.CaptionIcon}" />
+  </Style>
+  <Style Selector="Button.caption:pointerover /template/ ContentPresenter#PART_ContentPresenter, Button.caption:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource Brush.AccentSoft}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Text}" />
+  </Style>
+  <Style Selector="Button.caption.close:pointerover /template/ ContentPresenter#PART_ContentPresenter, Button.caption.close:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource Brush.Danger}" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.OnDanger}" />
+  </Style>
+
+  <!-- Disabled: last, so it wins over every variant. -->
+  <Style Selector="Button:disabled /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border}" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.TextSubtle}" />
+  </Style>
+  <Style Selector="Button.ghost:disabled /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="BorderBrush" Value="Transparent" />
+  </Style>
+
+  <!-- ===== TextBox (error state via Classes="error") ===== -->
+  <Style Selector="TextBox">
+    <Setter Property="Background" Value="{DynamicResource Brush.SurfaceRaised}" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Text}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.BorderStrong}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Thickness.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Radius.Control}" />
+    <Setter Property="MinHeight" Value="{DynamicResource Size.Control}" />
+    <Setter Property="Padding" Value="{DynamicResource Padding.Input}" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="CaretBrush" Value="{DynamicResource Brush.Text}" />
+    <Setter Property="PlaceholderForeground" Value="{DynamicResource Brush.TextSubtle}" />
+  </Style>
+  <Style Selector="TextBox:pointerover, TextBox:focus">
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Text}" />
+  </Style>
+  <Style Selector="TextBox /template/ TextBlock#PART_Placeholder, TextBox:pointerover /template/ TextBlock#PART_Placeholder, TextBox:focus /template/ TextBlock#PART_Placeholder">
+    <Setter Property="Foreground" Value="{DynamicResource Brush.TextSubtle}" />
+  </Style>
+  <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource Brush.SurfaceRaised}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Text}" />
+  </Style>
+  <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource Brush.SurfaceRaised}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Thickness.Emphasis}" />
+  </Style>
+  <Style Selector="TextBox.error /template/ Border#PART_BorderElement">
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Danger}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Thickness.Emphasis}" />
+  </Style>
+  <Style Selector="TextBox:disabled">
+    <Setter Property="Foreground" Value="{DynamicResource Brush.TextSubtle}" />
+  </Style>
+  <Style Selector="TextBox:disabled /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource Brush.Bg}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border}" />
+  </Style>
+
+  <!-- ===== CheckBox, menus, tooltips ===== -->
+  <Style Selector="CheckBox">
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Text}" />
+    <Setter Property="MinHeight" Value="{DynamicResource Size.Control}" />
+  </Style>
+  <Style Selector="Menu">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="MenuItem">
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Text}" />
+  </Style>
+  <Style Selector="MenuItem:pointerover /template/ Border#PART_LayoutRoot, MenuItem:selected /template/ Border#PART_LayoutRoot">
+    <Setter Property="Background" Value="{DynamicResource Brush.AccentSoft}" />
+  </Style>
+  <Style Selector="MenuItem /template/ TextBlock#PART_InputGestureText">
+    <Setter Property="Foreground" Value="{DynamicResource Brush.TextMuted}" />
+  </Style>
+  <Style Selector="MenuFlyoutPresenter, ContextMenu">
+    <Setter Property="CornerRadius" Value="{DynamicResource Radius.Control}" />
+  </Style>
+  <Style Selector="ToolTip">
+    <Setter Property="CornerRadius" Value="{DynamicResource Radius.Control}" />
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Small}" />
+  </Style>
+
+  <!-- ===== Tabs: small text tabs with an accent underline ===== -->
+  <Style Selector="TabControl">
+    <Setter Property="Background" Value="{DynamicResource Brush.Surface}" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+  <Style Selector="TabItem">
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Body}" />
+    <Setter Property="FontWeight" Value="{DynamicResource Weight.Medium}" />
+    <Setter Property="Padding" Value="{DynamicResource Padding.Tab}" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.TextMuted}" />
+  </Style>
+  <Style Selector="TabItem:pointerover /template/ Border#PART_LayoutRoot">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="TextElement.Foreground" Value="{DynamicResource Brush.Text}" />
+  </Style>
+  <Style Selector="TabItem:selected /template/ Border#PART_LayoutRoot, TabItem:selected:pointerover /template/ Border#PART_LayoutRoot">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="TextElement.Foreground" Value="{DynamicResource Brush.Text}" />
+  </Style>
+  <Style Selector="TabItem:selected /template/ Border#PART_SelectedPipe">
+    <Setter Property="Background" Value="{DynamicResource Brush.Accent}" />
+  </Style>
+  <!-- The tab body: a hairline under the tab strip. -->
+  <Style Selector="Border.tab-body">
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Thickness.Top}" />
+    <Setter Property="Padding" Value="{DynamicResource Padding.Panel}" />
+  </Style>
+
+  <!-- ===== Window chrome: menu row, separators, status bar, splitter ===== -->
+  <Style Selector="Border.menubar">
+    <Setter Property="MinHeight" Value="{DynamicResource Size.TitleBar}" />
+    <Setter Property="Background" Value="{DynamicResource Brush.Surface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Thickness.Bottom}" />
+  </Style>
+  <Style Selector="Border.vsep">
+    <Setter Property="Width" Value="{DynamicResource Stroke.Hairline}" />
+    <Setter Property="Height" Value="{DynamicResource Size.Separator}" />
+    <Setter Property="Background" Value="{DynamicResource Brush.Border}" />
+    <Setter Property="Margin" Value="{DynamicResource Margin.Separator}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+  <Style Selector="Border.statusbar">
+    <Setter Property="Background" Value="{DynamicResource Brush.Surface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Thickness.Top}" />
+    <Setter Property="Padding" Value="{DynamicResource Padding.StatusBar}" />
+  </Style>
+  <Style Selector="Border.statusbar TextBlock">
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Small}" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.TextMuted}" />
+  </Style>
+  <Style Selector="GridSplitter.grip">
+    <Setter Property="Width" Value="{DynamicResource Size.Splitter}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="Transparent">
+          <Border Width="{DynamicResource Stroke.Hairline}" Background="{DynamicResource Brush.Border}" HorizontalAlignment="Center" />
+          <StackPanel Spacing="{DynamicResource Size.GripDot}" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Ellipse Width="{DynamicResource Size.GripDot}" Height="{DynamicResource Size.GripDot}" Fill="{DynamicResource Brush.BorderStrong}" />
+            <Ellipse Width="{DynamicResource Size.GripDot}" Height="{DynamicResource Size.GripDot}" Fill="{DynamicResource Brush.BorderStrong}" />
+            <Ellipse Width="{DynamicResource Size.GripDot}" Height="{DynamicResource Size.GripDot}" Fill="{DynamicResource Brush.BorderStrong}" />
+          </StackPanel>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="GridSplitter.grip:pointerover Ellipse">
+    <Setter Property="Fill" Value="{DynamicResource Brush.Text}" />
+  </Style>
+
+  <!-- ===== Chips, tables, empty states ===== -->
+  <Style Selector="Border.chip">
+    <Setter Property="Background" Value="{DynamicResource Brush.SurfaceRaised}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.BorderStrong}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Thickness.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Radius.Control}" />
+    <Setter Property="Padding" Value="{DynamicResource Padding.Chip}" />
+    <Setter Property="Margin" Value="{DynamicResource Margin.WrapGap}" />
+  </Style>
+  <Style Selector="Border.table-header">
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.BorderStrong}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Thickness.Bottom}" />
+  </Style>
+  <Style Selector="Border.table-row">
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Thickness.Bottom}" />
+  </Style>
+  <Style Selector="Border.kbd">
+    <Setter Property="Background" Value="{DynamicResource Brush.SurfaceRaised}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.BorderStrong}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Thickness.Kbd}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Radius.Small}" />
+    <Setter Property="Padding" Value="{DynamicResource Padding.Kbd}" />
+  </Style>
+  <Style Selector="Border.kbd TextBlock">
+    <Setter Property="FontFamily" Value="{DynamicResource Font.Mono}" />
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Caption}" />
+  </Style>
+  <Style Selector="Ellipse.ghost-state">
+    <Setter Property="Width" Value="{DynamicResource Size.GhostState}" />
+    <Setter Property="Height" Value="{DynamicResource Size.GhostState}" />
+    <Setter Property="Stroke" Value="{DynamicResource Brush.BorderStrong}" />
+    <Setter Property="StrokeThickness" Value="{DynamicResource Stroke.Emphasis}" />
+    <Setter Property="StrokeDashArray" Value="3,2" />
+  </Style>
+
+  <!-- ===== Drawn controls: colors and fonts from tokens ===== -->
+  <Style Selector="controls|InputTape">
+    <Setter Property="FontFamily" Value="{DynamicResource Font.Mono}" />
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Symbol}" />
+  </Style>
+</Styles>

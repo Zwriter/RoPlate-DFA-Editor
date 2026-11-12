@@ -18,6 +18,9 @@ public static class DfaCanvasImage
     {
         var canvas = new DfaCanvas { Document = document, Foreground = Brushes.Black };
         var page = new Border { Background = Brushes.White, Child = canvas };
+
+        // Descriptions read Brush.TextMuted; on the white page they stay plain gray, whatever the app's theme.
+        page.Resources["Brush.TextMuted"] = Brushes.Gray;
         page.Measure(Size.Infinity);
         var size = page.DesiredSize;
         page.Arrange(new Rect(size));

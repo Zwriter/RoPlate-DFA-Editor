@@ -32,7 +32,8 @@ public sealed partial class DfaCanvas : UserControl
     static DfaCanvas()
     {
         AffectsRender<DfaCanvas>(
-            DocumentProperty, SelectedStateProperty, HighlightedStateProperty, HighlightKindProperty, HighlightedEdgeProperty);
+            DocumentProperty, SelectedStateProperty, HighlightedStateProperty, HighlightKindProperty, HighlightedEdgeProperty,
+            ForegroundProperty, FontFamilyProperty);
         AffectsMeasure<DfaCanvas>(DocumentProperty);
     }
 
@@ -41,6 +42,9 @@ public sealed partial class DfaCanvas : UserControl
         // A background, so clicks on empty areas reach the canvas (E-03), and focus for the Delete key.
         Background = Brushes.Transparent;
         Focusable = true;
+
+        // The theme brushes are read while painting, so a theme switch (Settings ▸ Theme) repaints.
+        ActualThemeVariantChanged += (_, _) => InvalidateVisual();
     }
 
     public event EventHandler<string>? StateClicked;

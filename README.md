@@ -12,6 +12,16 @@
   <img alt="Coverage gate" src="https://img.shields.io/badge/core%20coverage-%E2%89%A570%25-brightgreen">
 </p>
 
+## A short tour of RoPlate:
+
+<p align="center">
+  <video src="public/showcase.mp4" controls muted playsinline width="70%">
+    A short tour of RoPlate: drawing an automaton, simulating a word step by step, and checking a license plate.
+  </video>
+</p>
+
+<p align="center"><sub>Video not playing? <a href="public/showcase.mp4">Download the showcase (MP4)</a>.</sub></p>
+
 ---
 
 **RoPlate** is a tool for learning, teaching and debugging **deterministic finite automata (DFA)**. Build an automaton on a canvas, see its δ table fill in as you go, then run a word through it one symbol at a time. You can also have the tool explain why the word was accepted or rejected.

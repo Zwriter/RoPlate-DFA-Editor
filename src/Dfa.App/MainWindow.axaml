@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:app="using:Dfa.App"
+        xmlns:chrome="using:Avalonia.Controls.Chrome"
         xmlns:controls="using:Dfa.App.Controls"
         xmlns:editor="using:Dfa.App.Views.Editor"
         xmlns:examples="using:Dfa.Core.Examples"
@@ -12,7 +13,8 @@
         x:DataType="app:MainViewModel"
         x:CompileBindings="True"
         Title="{Binding Title}"
-        Width="1100" Height="700" MinWidth="800" MinHeight="500">
+        Width="1100" Height="700" MinWidth="800" MinHeight="500"
+        ExtendClientAreaToDecorationsHint="True" WindowDecorations="BorderOnly">
 
   <Window.KeyBindings>
     <KeyBinding Gesture="Ctrl+N" Command="{Binding NewCommand}" />
@@ -23,91 +25,144 @@
     <KeyBinding Gesture="Ctrl+Y" Command="{Binding RedoCommand}" />
   </Window.KeyBindings>
 
-  <Window.Styles>
-    <Style Selector="TextBlock.wip">
-      <Setter Property="Text" Value="Work in progress" />
-      <Setter Property="Margin" Value="8" />
-      <Setter Property="FontStyle" Value="Italic" />
-    </Style>
-  </Window.Styles>
+  <!-- When maximized, the window reaches past the screen edge by OffScreenMargin; keep the content on screen. -->
+  <DockPanel Margin="{Binding $parent[Window].OffScreenMargin}">
+    <!-- The menu row from contract 3: File, Examples, Edit, [↶] [↷] [Complete with trap state]. It is also the
+         window's title bar (no system title bar): the empty middle drags the window, the right holds the caption buttons. -->
+    <Border DockPanel.Dock="Top" Classes="menubar">
+      <DockPanel>
+        <controls:CaptionButtons DockPanel.Dock="Right" />
+        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="{DynamicResource Gap.Inline}">
+          <Menu>
+            <MenuItem Header="_File">
+              <MenuItem Header="_New" InputGesture="Ctrl+N" Command="{Binding NewCommand}" />
+              <MenuItem Header="_Open…" InputGesture="Ctrl+O" Command="{Binding OpenCommand}" />
+              <MenuItem Header="_Save" InputGesture="Ctrl+S" Command="{Binding SaveCommand}" />
+              <MenuItem Header="Save _as…" InputGesture="Ctrl+Shift+S" Command="{Binding SaveAsCommand}" />
+              <MenuItem Header="_Export as PNG…" Command="{Binding ExportPngCommand}" />
+              <Separator />
+              <!-- Settings: the color theme (follow the OS, light, dark), remembered between runs. -->
+              <MenuItem Header="Se_ttings">
+                <MenuItem Header="_Theme">
+                  <MenuItem Header="Follow _system" ToggleType="Radio" GroupName="Theme"
+                            IsChecked="{Binding Settings.IsSystemTheme, Mode=TwoWay}" />
+                  <MenuItem Header="_Light" ToggleType="Radio" GroupName="Theme"
+                            IsChecked="{Binding Settings.IsLightTheme, Mode=TwoWay}" />
+                  <MenuItem Header="_Dark" ToggleType="Radio" GroupName="Theme"
+                            IsChecked="{Binding Settings.IsDarkTheme, Mode=TwoWay}" />
+                </MenuItem>
+              </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Examples" ItemsSource="{Binding Examples}">
+              <MenuItem.Styles>
+                <Style Selector="MenuItem > MenuItem" x:DataType="examples:ExampleInfo">
+                  <Setter Property="Header" Value="{Binding Title}" />
+                  <Setter Property="Command"
+                          Value="{Binding $parent[Window].((app:MainViewModel)DataContext).OpenExampleCommand}" />
+                  <Setter Property="CommandParameter" Value="{Binding}" />
+                </Style>
+              </MenuItem.Styles>
+            </MenuItem>
+            <MenuItem Header="E_dit">
+              <MenuItem Header="_Undo" InputGesture="Ctrl+Z" Command="{Binding UndoCommand}" />
+              <MenuItem Header="_Redo" InputGesture="Ctrl+Y" Command="{Binding RedoCommand}" />
+              <MenuItem Header="Complete with _trap state" Command="{Binding CompleteWithTrapCommand}" />
+            </MenuItem>
+            <MenuItem Header="_Apps">
+              <MenuItem Header="_RoPlate" Command="{Binding ShowRoPlateCommand}" />
+            </MenuItem>
+          </Menu>
+          <Border Classes="vsep" />
+          <!-- E-06: the toolbar buttons; ↶ / ↷ have a name and a tooltip, not only the icon. -->
+          <Button Classes="ghost icon" Command="{Binding UndoCommand}" VerticalAlignment="Center"
+                  ToolTip.Tip="Undo (Ctrl+Z)" AutomationProperties.Name="Undo">
+            <PathIcon Data="{DynamicResource Icon.Undo}" />
+          </Button>
+          <Button Classes="ghost icon" Command="{Binding RedoCommand}" VerticalAlignment="Center"
+                  ToolTip.Tip="Redo (Ctrl+Y)" AutomationProperties.Name="Redo">
+            <PathIcon Data="{DynamicResource Icon.Redo}" />
+          </Button>
+          <Border Classes="vsep" />
+          <Button Classes="ghost" Content="Complete with trap state" Command="{Binding CompleteWithTrapCommand}"
+                  VerticalAlignment="Center" />
+        </StackPanel>
+        <!-- The free part of the row: drag to move, double-click to maximize (no title text). -->
+        <Border chrome:WindowDecorationProperties.ElementRole="TitleBar" Background="Transparent" />
+      </DockPanel>
+    </Border>
 
-  <DockPanel>
-    <!-- The menu row from contract 3: File, Examples, Edit, [↶] [↷] [Complete with trap state]. -->
-    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="4">
-      <Menu>
-        <MenuItem Header="_File">
-          <MenuItem Header="_New" InputGesture="Ctrl+N" Command="{Binding NewCommand}" />
-          <MenuItem Header="_Open…" InputGesture="Ctrl+O" Command="{Binding OpenCommand}" />
-          <MenuItem Header="_Save" InputGesture="Ctrl+S" Command="{Binding SaveCommand}" />
-          <MenuItem Header="Save _as…" InputGesture="Ctrl+Shift+S" Command="{Binding SaveAsCommand}" />
-          <MenuItem Header="_Export as PNG…" Command="{Binding ExportPngCommand}" />
-        </MenuItem>
-        <MenuItem Header="_Examples" ItemsSource="{Binding Examples}">
-          <MenuItem.Styles>
-            <Style Selector="MenuItem > MenuItem" x:DataType="examples:ExampleInfo">
-              <Setter Property="Header" Value="{Binding Title}" />
-              <Setter Property="Command"
-                      Value="{Binding $parent[Window].((app:MainViewModel)DataContext).OpenExampleCommand}" />
-              <Setter Property="CommandParameter" Value="{Binding}" />
-            </Style>
-          </MenuItem.Styles>
-        </MenuItem>
-        <MenuItem Header="E_dit">
-          <MenuItem Header="_Undo" InputGesture="Ctrl+Z" Command="{Binding UndoCommand}" />
-          <MenuItem Header="_Redo" InputGesture="Ctrl+Y" Command="{Binding RedoCommand}" />
-          <MenuItem Header="Complete with _trap state" Command="{Binding CompleteWithTrapCommand}" />
-        </MenuItem>
-        <MenuItem Header="_Apps">
-          <MenuItem Header="_RoPlate" Command="{Binding ShowRoPlateCommand}" />
-        </MenuItem>
-      </Menu>
-      <!-- E-06: the toolbar buttons; ↶ / ↷ have a name and a tooltip, not only the symbol. -->
-      <Button Content="↶" Command="{Binding UndoCommand}" VerticalAlignment="Center"
-              ToolTip.Tip="Undo (Ctrl+Z)" AutomationProperties.Name="Undo" />
-      <Button Content="↷" Command="{Binding RedoCommand}" VerticalAlignment="Center"
-              ToolTip.Tip="Redo (Ctrl+Y)" AutomationProperties.Name="Redo" />
-      <Button Content="Complete with trap state" Command="{Binding CompleteWithTrapCommand}" VerticalAlignment="Center" />
-    </StackPanel>
-
-    <Border DockPanel.Dock="Bottom" Padding="8,4"
-            BorderThickness="0,1,0,0" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+    <Border DockPanel.Dock="Bottom" Classes="statusbar">
       <TextBlock Text="{Binding StatusMessage}" TextTrimming="CharacterEllipsis" />
     </Border>
 
-    <Grid ColumnDefinitions="*,4,380">
-      <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <!-- S-06: the simulation is shown on the drawing (contract 3, section 6). -->
-        <controls:DfaCanvas Document="{Binding Session.Document}"
-                            Mode="{Binding CurrentCanvasMode}"
-                            HighlightedState="{Binding Simulator.CurrentState}"
-                            HighlightKind="{Binding Simulator.HighlightKind}"
-                            HighlightedEdge="{Binding Simulator.LastEdge}">
-          <!-- Editing errors (e.g. the ED-04 message) go to the status bar. -->
-          <i:Interaction.Behaviors>
-            <ia:EventTriggerBehavior EventName="StatusMessage">
-              <ia:InvokeCommandAction Command="{Binding ShowStatusCommand}" />
-            </ia:EventTriggerBehavior>
-            <ia:EventTriggerBehavior EventName="StateClicked">
-              <ia:InvokeCommandAction Command="{Binding StateClickedCommand}" />
-            </ia:EventTriggerBehavior>
-          </i:Interaction.Behaviors>
-        </controls:DfaCanvas>
-      </ScrollViewer>
-      <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="{StaticResource Size.SidePanel}" />
+      </Grid.ColumnDefinitions>
+
+      <!-- The canvas on aged dot-grid paper, with the edge vignette on top (DESIGN_RULES.md §1). -->
+      <Panel>
+        <Border Background="{DynamicResource Brush.CanvasPaper}" />
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+          <!-- S-06: the simulation is shown on the drawing (contract 3, section 6). -->
+          <controls:DfaCanvas Document="{Binding Session.Document}"
+                              Mode="{Binding CurrentCanvasMode}"
+                              HighlightedState="{Binding Simulator.CurrentState}"
+                              HighlightKind="{Binding Simulator.HighlightKind}"
+                              HighlightedEdge="{Binding Simulator.LastEdge}">
+            <!-- Editing errors (e.g. the ED-04 message) go to the status bar. -->
+            <i:Interaction.Behaviors>
+              <ia:EventTriggerBehavior EventName="StatusMessage">
+                <ia:InvokeCommandAction Command="{Binding ShowStatusCommand}" />
+              </ia:EventTriggerBehavior>
+              <ia:EventTriggerBehavior EventName="StateClicked">
+                <ia:InvokeCommandAction Command="{Binding StateClickedCommand}" />
+              </ia:EventTriggerBehavior>
+            </i:Interaction.Behaviors>
+          </controls:DfaCanvas>
+        </ScrollViewer>
+        <Border Background="{DynamicResource Brush.CanvasVignette}" IsHitTestVisible="False" />
+
+        <!-- Empty state: how to start; it lets double-clicks through to the canvas. -->
+        <StackPanel IsVisible="{Binding IsDocumentEmpty}" IsHitTestVisible="False" MaxWidth="320"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="{DynamicResource Gap.Group}">
+          <Panel HorizontalAlignment="Center">
+            <Ellipse Classes="ghost-state" />
+            <TextBlock Classes="mono muted" Text="q0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Panel>
+          <TextBlock Classes="title" Text="Start with a state" HorizontalAlignment="Center" />
+          <TextBlock Classes="muted" TextWrapping="Wrap" TextAlignment="Center"
+                     Text="Double-click anywhere to add a state. Shift + drag from one state to another to add a transition." />
+          <TextBlock Classes="muted small" TextWrapping="Wrap" TextAlignment="Center"
+                     Text="Or open one from the Examples menu." />
+        </StackPanel>
+      </Panel>
+
+      <GridSplitter Grid.Column="1" Classes="grip" ResizeDirection="Columns" />
+
       <TabControl Grid.Column="2" SelectedIndex="{Binding SelectedTabIndex}">
         <!-- Order matches MainTab: Editor, Simulator, Tests. -->
         <TabItem Header="Edit">
           <!-- E-04: the alphabet and the classes, with the δ table (P1) below. -->
-          <DockPanel Margin="8">
-            <editor:EditorPanel DockPanel.Dock="Top" DataContext="{Binding Editor}" Margin="0,0,0,12" />
-            <table:TransitionTablePanel DataContext="{Binding Table}" />
-          </DockPanel>
+          <Border Classes="tab-body">
+            <DockPanel>
+              <editor:EditorPanel DockPanel.Dock="Top" DataContext="{Binding Editor}"
+                                  Margin="{DynamicResource Margin.SectionBottom}" />
+              <table:TransitionTablePanel DataContext="{Binding Table}" />
+            </DockPanel>
+          </Border>
         </TabItem>
         <TabItem Header="Simulate">
-          <simulator:SimulatorPanel DataContext="{Binding Simulator}" />
+          <Border Classes="tab-body">
+            <simulator:SimulatorPanel DataContext="{Binding Simulator}" />
+          </Border>
         </TabItem>
         <TabItem Header="Tests">
-          <simulator:BatchTestPanel DataContext="{Binding BatchTests}" />
+          <Border Classes="tab-body">
+            <simulator:BatchTestPanel DataContext="{Binding BatchTests}" />
+          </Border>
         </TabItem>
       </TabControl>
     </Grid>

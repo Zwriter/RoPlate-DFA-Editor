@@ -11,7 +11,10 @@ using Dfa.Core.Model;
 // Painting only: the whole automaton is repainted from Document on every change (a handful of shapes, so cheap).
 public sealed partial class DfaCanvas
 {
-    private const double LabelFontSize = 14;
+    // Values from the design tokens (DESIGN_RULES.md §2); colors and fonts come from resources at render time.
+    private const double LabelFontSize = 14; // FontSize.CanvasLabel
+    private const double EdgeThickness = 1.5; // Stroke.Edge (contract 3)
+    private const double SelectedThickness = 3; // Stroke.LastEdge
 
     public override void Render(DrawingContext context)
     {
@@ -22,7 +25,9 @@ public sealed partial class DfaCanvas
         }
 
         var brush = Foreground ?? Brushes.Black;
-        var pen = new Pen(brush, 1.5);
+        var pen = new Pen(brush, EdgeThickness);
+        var typeface = new Typeface(FontFamily);
+        var descriptionBrush = ThemeBrush.Find(this, "Brush.TextMuted", brush);
         var dfa = document.Dfa;
         var edges = dfa.Edges;
 
@@ -32,12 +37,12 @@ public sealed partial class DfaCanvas
             var shape = ShapeOf(document, edge, edges);
             if (LastEdgeBrush(edge, brush) is { } last)
             {
-                DrawEdge(context, new Pen(last, LastEdgeThickness), last, shape, SymbolList.Format(edge.Symbols));
+                DrawEdge(context, new Pen(last, LastEdgeThickness), last, typeface, shape, SymbolList.Format(edge.Symbols));
                 continue;
             }
 
-            var edgePen = _selectedEdge == new EdgeRef(edge.From, edge.To) ? new Pen(brush, 3) : pen;
-            DrawEdge(context, edgePen, brush, shape, SymbolList.Format(edge.Symbols));
+            var edgePen = _selectedEdge == new EdgeRef(edge.From, edge.To) ? new Pen(brush, SelectedThickness) : pen;
+            DrawEdge(context, edgePen, brush, typeface, shape, SymbolList.Format(edge.Symbols));
         }
 
         foreach (var state in dfa.States)
@@ -46,7 +51,7 @@ public sealed partial class DfaCanvas
             context.DrawEllipse(null, pen, center, CanvasGeometry.Radius, CanvasGeometry.Radius);
             if (state == SelectedState)
             {
-                var dashed = new Pen(brush, 1.5) { DashStyle = DashStyle.Dash };
+                var dashed = new Pen(brush, EdgeThickness) { DashStyle = DashStyle.Dash };
                 context.DrawEllipse(null, dashed, center, CanvasGeometry.Radius + 5, CanvasGeometry.Radius + 5);
             }
 
@@ -56,10 +61,10 @@ public sealed partial class DfaCanvas
             }
 
             DrawStateHighlight(context, state, center, brush);
-            DrawText(context, brush, state, center);
+            DrawText(context, brush, typeface, state, center);
             if (document.Descriptions.TryGetValue(state, out var description))
             {
-                DrawDescription(context, Brushes.Gray, description, center);
+                DrawDescription(context, descriptionBrush, typeface, description, center);
             }
         }
 
@@ -68,13 +73,13 @@ public sealed partial class DfaCanvas
             var end = Center(document, start) - new Vector(CanvasGeometry.Radius, 0);
             var begin = end - new Vector(CanvasGeometry.StartArrowLength, 0);
             var label = begin - new Vector(0, LabelFontSize);
-            DrawEdge(context, pen, brush, new EdgeShape(begin, begin, end, end, label), "start");
+            DrawEdge(context, pen, brush, typeface, new EdgeShape(begin, begin, end, end, label), "start");
         }
 
         // Shift + drag: the new transition follows the mouse until it is released on a state.
         if (_link is { } link)
         {
-            context.DrawLine(new Pen(brush, 1.5) { DashStyle = DashStyle.Dash }, Center(document, link.From), link.To);
+            context.DrawLine(new Pen(brush, EdgeThickness) { DashStyle = DashStyle.Dash }, Center(document, link.From), link.To);
         }
     }
 
@@ -123,7 +128,7 @@ public sealed partial class DfaCanvas
         return document.Layout.TryGetValue(state, out var p) ? new Point(p.X, p.Y) : default;
     }
 
-    private static void DrawEdge(DrawingContext context, Pen pen, IBrush brush, EdgeShape shape, string label)
+    private static void DrawEdge(DrawingContext context, Pen pen, IBrush brush, Typeface typeface, EdgeShape shape, string label)
     {
         var line = new StreamGeometry();
         using (var c = line.Open())
@@ -145,13 +150,13 @@ public sealed partial class DfaCanvas
 
         context.DrawGeometry(null, pen, line);
         context.DrawGeometry(brush, null, head);
-        DrawText(context, brush, label, shape.Label);
+        DrawText(context, brush, typeface, label, shape.Label);
     }
 
-    private static void DrawText(DrawingContext context, IBrush brush, string text, Point center)
+    private static void DrawText(DrawingContext context, IBrush brush, Typeface typeface, string text, Point center)
     {
         var formatted = new FormattedText(
-            text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, Typeface.Default, LabelFontSize, brush);
+            text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, LabelFontSize, brush);
         context.DrawText(formatted, center - new Vector(formatted.Width / 2, formatted.Height / 2));
     }
 }

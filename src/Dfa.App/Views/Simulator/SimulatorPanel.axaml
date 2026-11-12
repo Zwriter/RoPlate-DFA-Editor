@@ -6,15 +6,15 @@
              x:DataType="vm:SimulatorViewModel"
              x:CompileBindings="True">
 
-    <StackPanel Margin="8" Spacing="8">
-        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+    <StackPanel Spacing="{DynamicResource Gap.Group}">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Gap.Related}">
             <!-- S-01: empty = ε, shows the text "ε" when empty. -->
-            <TextBox Text="{Binding Input}" PlaceholderText="ε">
+            <TextBox Classes="mono" Text="{Binding Input}" PlaceholderText="ε" AutomationProperties.Name="Word">
                 <TextBox.KeyBindings>
                     <KeyBinding Gesture="Enter" Command="{Binding StartSimulationCommand}" />
                 </TextBox.KeyBindings>
             </TextBox>
-            <Button Grid.Column="1" Content="Start" Command="{Binding StartSimulationCommand}" />
+            <Button Grid.Column="1" Classes="primary" Content="Start" Command="{Binding StartSimulationCommand}" />
         </Grid>
 
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
@@ -25,41 +25,42 @@
         </ScrollViewer>
 
         <WrapPanel>
-            <Button Margin="0,0,4,4" Content="Step forward" Command="{Binding StepForwardCommand}" />
-            <Button Margin="0,0,4,4" Content="Step back" Command="{Binding StepBackCommand}" />
-            <Button Margin="0,0,4,4" Content="Reset" Command="{Binding ResetCommand}" />
-            <Button Margin="0,0,4,4" Content="Run to end" Command="{Binding RunToEndCommand}" />
+            <Button Margin="{DynamicResource Margin.WrapGap}" Content="Step forward" Command="{Binding StepForwardCommand}" />
+            <Button Margin="{DynamicResource Margin.WrapGap}" Content="Step back" Command="{Binding StepBackCommand}" />
+            <Button Margin="{DynamicResource Margin.WrapGap}" Content="Run to end" Command="{Binding RunToEndCommand}" />
             <!-- S-05: Play / Pause. -->
-            <Button Margin="0,0,4,4" Command="{Binding PlayPauseCommand}">
+            <Button Margin="{DynamicResource Margin.WrapGap}" Command="{Binding PlayPauseCommand}">
                 <Panel>
                     <TextBlock Text="Play" IsVisible="{Binding !IsPlaying}" />
                     <TextBlock Text="Pause" IsVisible="{Binding IsPlaying}" />
                 </Panel>
             </Button>
+            <Button Margin="{DynamicResource Margin.WrapGap}" Classes="ghost" Content="Reset" Command="{Binding ResetCommand}" />
         </WrapPanel>
 
-        <!-- S-05: the speed slider (100–2000 ms) bound to the timer's Interval. -->
-        <Slider Minimum="100" Maximum="2000" Value="{Binding Interval}" />
+        <!-- S-05: the delay between steps (100–2000 ms) bound to the timer's Interval, labeled with its value. -->
+        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Gap.Group}">
+            <TextBlock Classes="muted small" Text="Step delay" VerticalAlignment="Center" />
+            <Slider Grid.Column="1" Minimum="100" Maximum="2000" Value="{Binding Interval}"
+                    AutomationProperties.Name="Step delay" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="2" Classes="mono small" Text="{Binding Interval, StringFormat='{}{0:0} ms'}"
+                       VerticalAlignment="Center" />
+        </Grid>
 
         <!-- S-08: the "Guess" mode; click on the drawing the state the automaton goes to. -->
         <CheckBox Content="Guess" IsChecked="{Binding IsGuessMode}" />
         <TextBlock Text="{Binding GuessMessage}" TextWrapping="Wrap"
                    IsVisible="{Binding GuessMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
-        <TextBlock Text="{Binding Score}" FontWeight="SemiBold"
+        <TextBlock Classes="strong" Text="{Binding Score}"
                    IsVisible="{Binding Score, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
-        <!-- S-04: the verdict, with a green ✓ / red ✗ (symbol + color). -->
-        <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding IsRunning}">
-            <TextBlock Text="✓" FontWeight="Bold" Foreground="{DynamicResource Brush.Accepted}"
-                       IsVisible="{Binding IsAccepted}" />
-            <TextBlock Text="✗" FontWeight="Bold" Foreground="{DynamicResource Brush.Rejected}"
-                       IsVisible="{Binding IsRejected}" />
-            <TextBlock Text="{Binding Explanation}" TextWrapping="Wrap" />
-        </StackPanel>
+        <!-- S-04: the verdict, with ✓ / ✗ (symbol + color) in a status box. -->
+        <controls:VerdictLine IsVisible="{Binding IsRunning}" Text="{Binding Explanation}"
+                              IsAccepted="{Binding IsAccepted}" IsRejected="{Binding IsRejected}" />
 
         <vm:ExecutionTable IsVisible="{Binding IsRunning}" />
 
-        <TextBlock Text="{Binding Message}" TextWrapping="Wrap"
+        <TextBlock Classes="muted" Text="{Binding Message}" TextWrapping="Wrap"
                    IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}" />
     </StackPanel>
 </UserControl>
