@@ -102,7 +102,8 @@ public sealed partial class MainViewModel : ObservableObject
     private void ShowRoPlate() => Navigation.ShowRoPlate();
 
     // Returns false when the current document must be kept (unsaved changes and the save was cancelled or failed).
-    private async Task<bool> ConfirmDiscardAsync() =>
+    // Also used by NavigationService.OpenInSimulator ("Show automaton" from RoPlate).
+    public async Task<bool> ConfirmDiscardAsync() =>
         !Session.IsDirty || !await _dialogs.ConfirmAsync("Save changes?") || await SaveCoreAsync(Session.FilePath);
 
     private async Task<bool> SaveCoreAsync(string? path)
