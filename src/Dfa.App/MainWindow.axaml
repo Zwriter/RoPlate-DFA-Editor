@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:app="using:Dfa.App"
         xmlns:controls="using:Dfa.App.Controls"
+        xmlns:editor="using:Dfa.App.Views.Editor"
         xmlns:examples="using:Dfa.Core.Examples"
         xmlns:simulator="using:Dfa.App.Views.Simulator"
         xmlns:i="using:Avalonia.Xaml.Interactivity"
@@ -71,9 +72,10 @@
       <TabControl Grid.Column="2" SelectedIndex="{Binding SelectedTabIndex}">
         <!-- Order matches MainTab: Editor, Simulator, Tests. -->
         <TabItem Header="Edit">
-          <DockPanel>
-            <TextBlock DockPanel.Dock="Top" Classes="wip" />
-            <table:TransitionTablePanel DataContext="{Binding Table}" Margin="8" />
+          <!-- E-04: the alphabet and the classes, with the δ table (P1) below. -->
+          <DockPanel Margin="8">
+            <editor:EditorPanel DockPanel.Dock="Top" DataContext="{Binding Editor}" Margin="0,0,0,12" />
+            <table:TransitionTablePanel DataContext="{Binding Table}" />
           </DockPanel>
         </TabItem>
         <TabItem Header="Simulate">

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Dfa.App.Services;
+using Dfa.App.Views.Editor;
 using Dfa.App.Views.Simulator;
 using Dfa.App.Views.TransitionTable;
 using Dfa.Core.Documents;
@@ -26,6 +27,7 @@ public sealed partial class MainViewModel : ObservableObject
     {
         _dialogs = dialogs;
         Navigation = new NavigationService(this, Session);
+        Editor = new EditorViewModel(Session, dialogs);
         Table = new TransitionTableViewModel(Session);
         Simulator = new SimulatorViewModel(Session, dialogs);
         BatchTests = new BatchTestViewModel(Session);
@@ -42,6 +44,8 @@ public sealed partial class MainViewModel : ObservableObject
     public DocumentSession Session { get; } = new();
 
     public INavigationService Navigation { get; }
+
+    public EditorViewModel Editor { get; }
 
     public TransitionTableViewModel Table { get; }
 
