@@ -238,4 +238,73 @@ public class SimulatorViewModelTests
         _sim.Stop();
         _sim.IsPlaying.ShouldBeFalse();
     }
+
+    [Fact]
+    public void Guess_AsksForAStateBeforeEachStep_AndDisablesTheStepButtons()
+    {
+        _sim.IsGuessMode = true;
+        _sim.Start("ab");
+
+        _sim.RequestedCanvasMode.ShouldBe(CanvasMode.PickState);
+        _sim.StepForwardCommand.CanExecute(null).ShouldBeFalse();
+        _sim.RunToEndCommand.CanExecute(null).ShouldBeFalse();
+        _sim.PlayPauseCommand.CanExecute(null).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Guess_ConfirmsOrCorrects_TakesTheStep_AndShowsTheScoreAtTheEnd()
+    {
+        _sim.IsGuessMode = true;
+        _sim.Start("ab");
+
+        _sim.OnStateClicked("q1");
+        _sim.GuessMessage.ShouldBe("Correct!");
+        _sim.CurrentState.ShouldBe("q1");
+        _sim.Score.ShouldBeNull();
+
+        _sim.OnStateClicked("q0");
+        _sim.GuessMessage.ShouldBe("Wrong: the automaton goes to q1");
+        _sim.IsAtEnd.ShouldBeTrue();
+        _sim.RequestedCanvasMode.ShouldBe(CanvasMode.Edit);
+        _sim.Score.ShouldBe("Score: 1 of 2");
+    }
+
+    [Fact]
+    public void Guess_ABlockingStepIsTakenWithoutAGuess()
+    {
+        _sim.IsGuessMode = true;
+        _sim.Start("ac");
+
+        _sim.OnStateClicked("q1");
+
+        _sim.IsAtEnd.ShouldBeTrue();
+        _sim.ErrorPosition.ShouldBe(1);
+        _sim.Score.ShouldBe("Score: 1 of 1");
+    }
+
+    [Fact]
+    public void Guess_ResetStartsTheScoreAgain()
+    {
+        _sim.IsGuessMode = true;
+        _sim.Start("ab");
+        _sim.OnStateClicked("q0");
+
+        _sim.ResetCommand.Execute(null);
+
+        _sim.GuessMessage.ShouldBeNull();
+        _sim.OnStateClicked("q1");
+        _sim.OnStateClicked("q1");
+        _sim.Score.ShouldBe("Score: 2 of 2");
+    }
+
+    [Fact]
+    public void WithoutGuess_AClickDoesNothing()
+    {
+        _sim.Start("ab");
+
+        _sim.OnStateClicked("q1");
+
+        _sim.IsAtStart.ShouldBeTrue();
+        _sim.GuessMessage.ShouldBeNull();
+    }
 }

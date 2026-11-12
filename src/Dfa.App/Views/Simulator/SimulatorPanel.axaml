@@ -41,6 +41,13 @@
         <!-- S-05: the speed slider (100–2000 ms) bound to the timer's Interval. -->
         <Slider Minimum="100" Maximum="2000" Value="{Binding Interval}" />
 
+        <!-- S-08: the "Guess" mode; click on the drawing the state the automaton goes to. -->
+        <CheckBox Content="Guess" IsChecked="{Binding IsGuessMode}" />
+        <TextBlock Text="{Binding GuessMessage}" TextWrapping="Wrap"
+                   IsVisible="{Binding GuessMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+        <TextBlock Text="{Binding Score}" FontWeight="SemiBold"
+                   IsVisible="{Binding Score, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
         <!-- S-04: the verdict, with a green ✓ / red ✗ (symbol + color). -->
         <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding IsRunning}">
             <TextBlock Text="✓" FontWeight="Bold" Foreground="{DynamicResource Brush.Accepted}"
