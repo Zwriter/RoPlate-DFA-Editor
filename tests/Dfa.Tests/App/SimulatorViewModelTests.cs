@@ -203,4 +203,39 @@ public class SimulatorViewModelTests
         _sim.IsRejected.ShouldBeTrue();
         _sim.IsAccepted.ShouldBeFalse();
     }
+
+    [Fact]
+    public void PlayPause_IsDisabledWithoutASimulation_AndTheIntervalStartsAt1000()
+    {
+        _sim.PlayPauseCommand.CanExecute(null).ShouldBeFalse();
+        _sim.Interval.ShouldBe(1000);
+    }
+
+    [Fact]
+    public void Play_StopsByItselfAtTheEnd()
+    {
+        _sim.Start("ab");
+
+        _sim.PlayPauseCommand.Execute(null);
+        _sim.IsPlaying.ShouldBeTrue();
+
+        _sim.RunToEndCommand.Execute(null);
+
+        _sim.IsPlaying.ShouldBeFalse();
+        _sim.PlayPauseCommand.CanExecute(null).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void PlayPause_TogglesAndAStopPauses()
+    {
+        _sim.Start("ab");
+
+        _sim.PlayPauseCommand.Execute(null);
+        _sim.PlayPauseCommand.Execute(null);
+        _sim.IsPlaying.ShouldBeFalse();
+
+        _sim.PlayPauseCommand.Execute(null);
+        _sim.Stop();
+        _sim.IsPlaying.ShouldBeFalse();
+    }
 }
