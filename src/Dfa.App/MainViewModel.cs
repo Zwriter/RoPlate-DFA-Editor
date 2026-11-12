@@ -2,6 +2,7 @@ namespace Dfa.App;
 
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -16,6 +17,8 @@ using Dfa.Core.Serialization;
 
 public sealed partial class MainViewModel : ObservableObject
 {
+    private const double TrapGap = 150;
+
     private readonly IDialogService _dialogs;
 
     [ObservableProperty]
@@ -48,6 +51,11 @@ public sealed partial class MainViewModel : ObservableObject
 
         Session.PropertyChanged += OnSessionPropertyChanged;
         Session.DocumentReplaced += (_, _) => OnPropertyChanged(nameof(Title));
+        Session.History.Changed += (_, _) =>
+        {
+            UndoCommand.NotifyCanExecuteChanged();
+            RedoCommand.NotifyCanExecuteChanged();
+        };
     }
 
     public DocumentSession Session { get; } = new();
@@ -121,6 +129,31 @@ public sealed partial class MainViewModel : ObservableObject
 
     [RelayCommand]
     private void ShowRoPlate() => Navigation.ShowRoPlate();
+
+    // E-06: undo / redo (Ctrl+Z / Ctrl+Y), enabled by CanUndo / CanRedo.
+    [RelayCommand(CanExecute = nameof(CanUndo))]
+    private void Undo() => Session.History.Undo();
+
+    [RelayCommand(CanExecute = nameof(CanRedo))]
+    private void Redo() => Session.History.Redo();
+
+    private bool CanUndo() => Session.History.CanUndo;
+
+    private bool CanRedo() => Session.History.CanRedo;
+
+    // E-06: the trap state goes to the right of the drawing, at the states' average height.
+    [RelayCommand]
+    private void CompleteWithTrap()
+    {
+        var layout = Session.Document.Layout.Values;
+        var position = Session.Document.Layout.Count == 0
+            ? new Point2(TrapGap, TrapGap)
+            : new Point2(layout.Max(p => p.X) + TrapGap, layout.Average(p => p.Y));
+        if (Session.Document.CompleteWithTrap(position).Error is { } error)
+        {
+            StatusMessage = error;
+        }
+    }
 
     // DfaCanvas.StatusMessage (contract 3): errors and info while editing.
     [RelayCommand]
