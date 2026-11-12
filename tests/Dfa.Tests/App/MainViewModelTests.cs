@@ -1,6 +1,7 @@
 namespace Dfa.Tests.App;
 
 using Dfa.App;
+using Dfa.App.Controls;
 using Dfa.App.Services;
 using Dfa.Core.Documents;
 using Dfa.Core.Examples;
@@ -126,5 +127,28 @@ public sealed class MainViewModelTests : IDisposable
 
         _dialogs.Confirms.ShouldBe(1);
         _main.Session.Document.Name.ShouldBe("copy");
+    }
+
+    [Fact]
+    public void CanvasMode_FollowsTheSimulatorOnlyOnTheSimulateTab()
+    {
+        _main.CurrentCanvasMode.ShouldBe(CanvasMode.Edit);
+
+        _main.Navigation.ShowTab(MainTab.Simulator);
+
+        _main.CurrentCanvasMode.ShouldBe(_main.Simulator.RequestedCanvasMode);
+    }
+
+    [Fact]
+    public void LeavingTheSimulateTab_StopsTheSimulation_SoNothingStaysHighlighted()
+    {
+        _main.Navigation.OpenInSimulator(ExampleCatalog.Load("even-a"), "ab");
+        _main.Simulator.CurrentState.ShouldBe("q0");
+
+        _main.Navigation.ShowTab(MainTab.Editor);
+
+        _main.Simulator.IsRunning.ShouldBeFalse();
+        _main.Simulator.CurrentState.ShouldBeNull();
+        _main.Simulator.HighlightKind.ShouldBe(HighlightKind.None);
     }
 }

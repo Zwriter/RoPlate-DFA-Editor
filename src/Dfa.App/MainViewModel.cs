@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Dfa.App.Controls;
 using Dfa.App.Services;
 using Dfa.App.Views.Editor;
 using Dfa.App.Views.Simulator;
@@ -37,11 +38,23 @@ public sealed partial class MainViewModel : ObservableObject
             Simulator.Start(word);
         };
 
+        Simulator.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(SimulatorViewModel.RequestedCanvasMode))
+            {
+                OnPropertyChanged(nameof(CurrentCanvasMode));
+            }
+        };
+
         Session.PropertyChanged += OnSessionPropertyChanged;
         Session.DocumentReplaced += (_, _) => OnPropertyChanged(nameof(Title));
     }
 
     public DocumentSession Session { get; } = new();
+
+    // S-06 (contract 3, section 6): the canvas follows the simulator only on the Simulate tab.
+    public CanvasMode CurrentCanvasMode =>
+        SelectedTabIndex == (int)MainTab.Simulator ? Simulator.RequestedCanvasMode : CanvasMode.Edit;
 
     public INavigationService Navigation { get; }
 
@@ -102,6 +115,10 @@ public sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private Task SaveAsAsync() => SaveCoreAsync(null);
 
+    // DfaCanvas.StateClicked goes to the simulator (the "Guess" mode, S-08).
+    [RelayCommand]
+    private void StateClicked(string state) => Simulator.OnStateClicked(state);
+
     [RelayCommand]
     private void ShowRoPlate() => Navigation.ShowRoPlate();
 
@@ -133,6 +150,17 @@ public sealed partial class MainViewModel : ObservableObject
         Session.IsDirty = false;
         StatusMessage = $"Saved {path}";
         return true;
+    }
+
+    // Leaving the Simulate tab stops the simulation, so nothing stays highlighted on the drawing.
+    partial void OnSelectedTabIndexChanged(int value)
+    {
+        if (value != (int)MainTab.Simulator)
+        {
+            Simulator.Stop();
+        }
+
+        OnPropertyChanged(nameof(CurrentCanvasMode));
     }
 
     private void OnSessionPropertyChanged(object? sender, PropertyChangedEventArgs e)
