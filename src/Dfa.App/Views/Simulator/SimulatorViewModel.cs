@@ -72,6 +72,13 @@ public sealed partial class SimulatorViewModel : ObservableObject
     // Always Edit until the "Guess" mode (S-08) asks for PickState.
     public CanvasMode RequestedCanvasMode => CanvasMode.Edit;
 
+    // What the input tape shows (S-02, contract 3, section 6).
+    public string TapeText => Run?.Input ?? "";
+
+    public int CursorPosition => Run?.LastStep is { } step ? step.Position + 1 : 0;
+
+    public int? ErrorPosition => Run is { IsBlocked: true, LastStep: { } step } ? step.Position : null;
+
     // The "Guess" mode (S-08) reacts to clicks on the canvas; without it a click does nothing.
     public void OnStateClicked(string state)
     {
@@ -142,6 +149,9 @@ public sealed partial class SimulatorViewModel : ObservableObject
         OnPropertyChanged(nameof(CurrentState));
         OnPropertyChanged(nameof(HighlightKind));
         OnPropertyChanged(nameof(LastEdge));
+        OnPropertyChanged(nameof(TapeText));
+        OnPropertyChanged(nameof(CursorPosition));
+        OnPropertyChanged(nameof(ErrorPosition));
         StepForwardCommand.NotifyCanExecuteChanged();
         StepBackCommand.NotifyCanExecuteChanged();
         ResetCommand.NotifyCanExecuteChanged();
