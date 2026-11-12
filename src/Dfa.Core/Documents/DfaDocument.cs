@@ -117,6 +117,34 @@ public sealed class DfaDocument
     public OpResult RemoveTransition(string from, string symbol) =>
         Raise(_dfa.RemoveTransition(from, symbol), DocumentChangeKind.Structure);
 
+    // ED-11: sets one δ cell as a single edit (one undo step); null clears it. A refused target leaves the cell as it was.
+    public OpResult SetTransition(string from, string symbol, string? to)
+    {
+        var old = _dfa.Next(from, symbol);
+        if (to is null)
+        {
+            return old is null ? OpResult.Success : RemoveTransition(from, symbol);
+        }
+
+        if (old == to)
+        {
+            return OpResult.Success;
+        }
+
+        if (old is not null)
+        {
+            _dfa.RemoveTransition(from, symbol);
+        }
+
+        var result = _dfa.AddTransitions(from, [symbol], to);
+        if (!result.Ok && old is not null)
+        {
+            _dfa.AddTransitions(from, [symbol], old);
+        }
+
+        return Raise(result, DocumentChangeKind.Structure);
+    }
+
     public OpResult RemoveEdge(string from, string to)
     {
         if (!_dfa.States.Contains(from))

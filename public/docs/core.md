@@ -51,6 +51,7 @@ The UI does not work with `Dfa` directly, but through `DfaDocument`, which also 
 - **No exceptions for user mistakes.** Every change returns an `OpResult`; if `Ok` is `false`, `Error` holds a message ready to display, and the automaton **has not changed at all**.
 - **Determinism comes from the structure.** δ is a `TransitionKey(state, symbol) → state` dictionary, so a (state, symbol) pair cannot have two targets. A second transition on the same symbol is refused (ED-04).
 - **`AddTransitions` is all or nothing.** Every symbol is checked before anything is added; a single bad symbol means nothing is added.
+- **`DfaDocument.SetTransition(from, symbol, to)` sets one δ cell as one edit** (one undo step): it replaces the target, `null` removes it, the same target changes nothing, and a refused target keeps the old one. The editable δ table uses it.
 - **Removing and renaming propagate.** `RemoveState` removes the transitions into and out of the state and drops it from finals/start. `RenameState` updates δ, the start state and the finals.
 - **A used symbol cannot be removed.** Remove its transitions first.
 - **Order is stable.** `States` and `Alphabet` keep insertion order; `Edges` (the arrows to draw) are ordered by state, and the symbols on each arrow by their order in Σ.
@@ -75,9 +76,9 @@ The UI does not work with `Dfa` directly, but through `DfaDocument`, which also 
 | C-08 | `BatchTester` | done |
 | C-09 | `DocumentHistory` (undo/redo) | done |
 | C-10 | `CompleteWithTrap` (trap state) | done |
-| C-11 | the δ table panel (`TransitionTablePanel`, in `Dfa.App`) | done (ED-11 editable cells: not done) |
+| C-11 | the δ table panel (`TransitionTablePanel`, in `Dfa.App`) | done (ED-11 editable cells: done, through `DfaDocument.SetTransition`) |
 | C-12 | coverage of `Dfa.Core` ≥ 70% (checked in CI) | done |
-| C-13 | `LanguageGenerator` (bonus, SI-11) | done |
+| C-13 | `LanguageGenerator` (bonus, SI-11) | done (shown in the Tests tab: **Shortest accepted words**) |
 
 ### Adding an example
 

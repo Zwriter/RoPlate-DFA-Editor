@@ -26,7 +26,7 @@
 
 It ships with a real-world app built on the same engine: **RoPlate**, a Romanian license-plate checker. The plate format is a 14-state automaton, and the checker validates a plate as you type. It tells you what it expects next ("waiting for 3 letters") and can open the automaton so you can see exactly where an input got stuck.
 
-> **Status:** the engine (`Dfa.Core`) is complete and fully tested. The main window, the File and Examples menus, the drawing, editing on the drawing, the alphabet and symbol classes, the step-by-step simulator (input tape, execution table, verdict, Play / Pause), batch tests, the RoPlate screen, the animation on the drawing during a simulation, the "Guess" mode, undo/redo, the trap state, state descriptions and PNG / SVG export work, and closing the window with unsaved changes asks to save. What is left are two bonus items: editable δ table cells (ED-11) and the word generator in the UI (SI-11). See the [team plan](public/docs/plan/README.md).
+> **Status:** the engine (`Dfa.Core`) is complete and fully tested. The main window, the File and Examples menus, the drawing, editing on the drawing, the alphabet and symbol classes, the step-by-step simulator (input tape, execution table, verdict, Play / Pause), batch tests, the RoPlate screen, the animation on the drawing during a simulation, the "Guess" mode, undo/redo, the trap state, state descriptions and PNG / SVG export work, and closing the window with unsaved changes asks to save. The bonus items are done too: editable δ table cells, the word generator and the county-code automaton. Every task in the [team plan](public/docs/plan/README.md) is complete.
 
 ## Contents
 
@@ -44,7 +44,7 @@ It ships with a real-world app built on the same engine: **RoPlate**, a Romanian
 - Draw states and transitions on a canvas; mark the start state and final states.
 - **Symbol classes**: one arrow labelled `L` stands for every letter `A-Z`, so real-world alphabets stay readable.
 - **Determinism by construction**: a second transition on the same symbol is refused with a clear message.
-- A live **δ table**: missing cells are flagged with `—`, not only by colour.
+- A live, editable **δ table**: click a cell to pick its target state (or `—` to remove it); missing cells are flagged with `—`, not only by colour.
 - **Complete with trap state** in one click: every missing transition goes to a new non-final state, and the language does not change.
 - Undo and redo for every edit, including moving a state.
 - A validator warns about a missing start state, an empty alphabet, unreachable states, no final states, and missing transitions.
@@ -55,7 +55,7 @@ It ships with a real-world app built on the same engine: **RoPlate**, a Romanian
 - **A verdict in plain English**, for example `REJECTED: symbol 'c' is not in the alphabet (position 3).`
 - **Batch testing**: keep a list of words with their expected verdicts inside the file and check them all at once ("9 of 10 correct").
 - **Guess mode**: predict the next state before each step and get a score at the end.
-- **A word generator**: list the shortest words the automaton accepts.
+- **A word generator**: list the shortest words the automaton accepts (**Tests ▸ Shortest accepted words**).
 
 **Safe by design**
 - Malformed files never crash the app: every problem is reported, with the field that caused it.

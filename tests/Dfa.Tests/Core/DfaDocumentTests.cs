@@ -147,4 +147,47 @@ public class DfaDocumentTests
         _doc.Descriptions["q0"].ShouldBe("start here");
         _changes.ShouldBe([DocumentChangeKind.Reset]);
     }
+
+    [Fact]
+    public void SetTransition_ChangesTheTarget_InOneEdit_AndUndoRestoresIt()
+    {
+        var history = new DocumentHistory(_doc);
+
+        _doc.SetTransition("q0", "a", "q0").Ok.ShouldBeTrue();
+
+        _doc.Dfa.Next("q0", "a").ShouldBe("q0");
+        _changes.ShouldBe([DocumentChangeKind.Structure]);
+        history.Undo();
+        _doc.Dfa.Next("q0", "a").ShouldBe("q1");
+    }
+
+    [Fact]
+    public void SetTransition_Null_ClearsTheCell_AndAnEmptyCellStaysQuiet()
+    {
+        _doc.SetTransition("q0", "a", null).Ok.ShouldBeTrue();
+        _doc.SetTransition("q1", "a", null).Ok.ShouldBeTrue();
+        _doc.SetTransition("q1", "a", null).Ok.ShouldBeTrue();
+
+        _doc.Dfa.Next("q0", "a").ShouldBeNull();
+        _changes.ShouldBe([DocumentChangeKind.Structure]);
+    }
+
+    [Fact]
+    public void SetTransition_SameTarget_IsNotAnEdit()
+    {
+        _doc.SetTransition("q0", "a", "q1").Ok.ShouldBeTrue();
+
+        _changes.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void SetTransition_Refused_KeepsTheOldTarget()
+    {
+        var result = _doc.SetTransition("q0", "a", "nowhere");
+
+        result.Ok.ShouldBeFalse();
+        result.Error.ShouldBe("State 'nowhere' does not exist.");
+        _doc.Dfa.Next("q0", "a").ShouldBe("q1");
+        _changes.ShouldBeEmpty();
+    }
 }

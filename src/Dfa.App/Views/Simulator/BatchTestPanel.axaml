@@ -17,6 +17,14 @@
             </WrapPanel>
             <TextBlock Classes="small" Text="{Binding Summary}"
                        IsVisible="{Binding Summary, Converter={x:Static ObjectConverters.IsNotNull}}" />
+            <!-- SI-11: the shortest words the automaton accepts (ε = the empty word), shown, not added to the list. -->
+            <WrapPanel>
+                <Button Margin="{DynamicResource Margin.WrapGap}" Classes="ghost" Content="Shortest accepted words"
+                        Command="{Binding GenerateWordsCommand}" />
+            </WrapPanel>
+            <SelectableTextBlock Classes="small" FontFamily="{DynamicResource Font.Mono}" TextWrapping="Wrap"
+                                 Text="{Binding AcceptedWords}" AutomationProperties.Name="Shortest accepted words"
+                                 IsVisible="{Binding AcceptedWords, Converter={x:Static ObjectConverters.IsNotNull}}" />
         </StackPanel>
 
         <Border DockPanel.Dock="Top" Classes="table-header" Margin="{DynamicResource Margin.RowGap}">

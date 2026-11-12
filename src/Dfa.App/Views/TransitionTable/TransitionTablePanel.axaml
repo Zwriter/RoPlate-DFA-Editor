@@ -12,7 +12,14 @@
             <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border}" />
             <Setter Property="BorderThickness" Value="{DynamicResource Thickness.CellLines}" />
         </Style>
-        <Style Selector="Border.cell > TextBlock">
+        <!-- An editable cell looks like a read-only one: the ghost button fills it without its own padding. -->
+        <Style Selector="Button.cell-button">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Border.cell > TextBlock, Button.cell-button > TextBlock">
             <Setter Property="FontFamily" Value="{DynamicResource Font.Mono}" />
             <Setter Property="FontSize" Value="{DynamicResource FontSize.Small}" />
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
@@ -34,8 +41,11 @@
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Margin="{DynamicResource Margin.RowGap}">
             <TextBlock Classes="heading" Text="Transition table δ" />
-            <TextBlock Classes="muted small" Text="→ start · * final · — missing" />
+            <TextBlock Classes="muted small" Text="→ start · * final · — missing · click a cell to change it" />
         </StackPanel>
+
+        <TextBlock DockPanel.Dock="Bottom" Classes="field-error" Text="{Binding Error, StringFormat='✗ {0}'}"
+                   IsVisible="{Binding Error, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <StackPanel>
@@ -66,17 +76,35 @@
                                 <Border Classes="cell header">
                                     <TextBlock Text="{Binding Label}" ToolTip.Tip="{Binding Label}" />
                                 </Border>
-                                <ItemsControl ItemsSource="{Binding Targets}">
+                                <ItemsControl ItemsSource="{Binding Cells}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <StackPanel Orientation="Horizontal" />
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
-                                        <DataTemplate x:DataType="x:String">
+                                        <!-- ED-11: click (or Enter) opens a menu of targets; the current one is checked. -->
+                                        <DataTemplate x:DataType="vm:TransitionCell">
                                             <Border Classes="cell"
-                                                    Classes.missing="{Binding Converter={x:Static ObjectConverters.IsNull}}">
-                                                <TextBlock Text="{Binding TargetNullValue=—}" />
+                                                    Classes.missing="{Binding Target, Converter={x:Static ObjectConverters.IsNull}}">
+                                                <Button Classes="ghost cell-button"
+                                                        ToolTip.Tip="{Binding Name, StringFormat='{}{0}: click to change'}"
+                                                        AutomationProperties.Name="{Binding Name}">
+                                                    <TextBlock Text="{Binding Target, TargetNullValue=—}" />
+                                                    <Button.Flyout>
+                                                        <MenuFlyout ItemsSource="{Binding Choices}">
+                                                            <MenuFlyout.ItemContainerTheme>
+                                                                <ControlTheme TargetType="MenuItem" x:DataType="vm:TransitionChoice"
+                                                                              BasedOn="{StaticResource {x:Type MenuItem}}">
+                                                                    <Setter Property="Header" Value="{Binding Label}" />
+                                                                    <Setter Property="Command" Value="{Binding Pick}" />
+                                                                    <Setter Property="ToggleType" Value="Radio" />
+                                                                    <Setter Property="IsChecked" Value="{Binding IsCurrent, Mode=OneWay}" />
+                                                                </ControlTheme>
+                                                            </MenuFlyout.ItemContainerTheme>
+                                                        </MenuFlyout>
+                                                    </Button.Flyout>
+                                                </Button>
                                             </Border>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>

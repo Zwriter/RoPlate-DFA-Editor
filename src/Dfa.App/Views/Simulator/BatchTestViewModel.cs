@@ -12,18 +12,34 @@ using Dfa.Core.Simulation;
 // The batch testing panel (S-07, SI-08). The list is saved with the automaton through Document.SetTests.
 public sealed partial class BatchTestViewModel : ObservableObject
 {
+    private const int GeneratedCount = 10;
+    private const int GeneratedMaxLength = 12;
+
     private readonly DocumentSession _session;
     private bool _saving;
 
     [ObservableProperty]
     private string? _summary;
 
+    // SI-11: the shortest accepted words, read-only; null until asked for and again after the automaton changes.
+    [ObservableProperty]
+    private string? _acceptedWords;
+
     public BatchTestViewModel(DocumentSession session)
     {
         _session = session;
-        session.DocumentReplaced += (_, _) => Load();
+        session.DocumentReplaced += (_, _) =>
+        {
+            AcceptedWords = null;
+            Load();
+        };
         session.DocumentEdited += (_, e) =>
         {
+            if (e.Kind is DocumentChangeKind.Structure or DocumentChangeKind.Reset)
+            {
+                AcceptedWords = null;
+            }
+
             // Our own SetTests: keep the rows (and the focus in the edited one), only the results are stale.
             if (_saving)
             {
@@ -72,6 +88,15 @@ public sealed partial class BatchTestViewModel : ObservableObject
         }
 
         Summary = result.Summary;
+    }
+
+    [RelayCommand]
+    private void GenerateWords()
+    {
+        var words = LanguageGenerator.FirstAccepted(_session.Document.Dfa, GeneratedCount, GeneratedMaxLength);
+        AcceptedWords = words.Count == 0
+            ? $"No accepted words up to length {GeneratedMaxLength}."
+            : string.Join(", ", words.Select(w => w.Length == 0 ? "ε" : w));
     }
 
     [RelayCommand]
