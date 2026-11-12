@@ -19,6 +19,7 @@ public sealed partial class SimulatorViewModel : ObservableObject
     private readonly DocumentSession _session;
     private readonly IDialogService _dialogs;
     private DispatcherTimer? _timer;
+    private readonly GuessGame _guess = new();
 
     [ObservableProperty]
     private string _input = "";
@@ -37,6 +38,14 @@ public sealed partial class SimulatorViewModel : ObservableObject
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
     private bool _isPlaying;
+
+    // "Guess" mode (S-08): the user clicks the state the automaton goes to before each step.
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(StepForwardCommand), nameof(RunToEndCommand), nameof(PlayPauseCommand))]
+    private bool _isGuessMode;
+
+    [ObservableProperty]
+    private string? _guessMessage;
 
     public SimulatorViewModel(DocumentSession session, IDialogService dialogs)
     {
@@ -80,8 +89,11 @@ public sealed partial class SimulatorViewModel : ObservableObject
 
     public EdgeRef? LastEdge => Run?.LastStep is { To: { } to } step ? new EdgeRef(step.From, to) : null;
 
-    // Always Edit until the "Guess" mode (S-08) asks for PickState.
-    public CanvasMode RequestedCanvasMode => CanvasMode.Edit;
+    // In "Guess" mode, PickState before each step; Edit otherwise.
+    public CanvasMode RequestedCanvasMode => IsGuessMode && !IsAtEnd ? CanvasMode.PickState : CanvasMode.Edit;
+
+    // Shown at the end of a guessed run.
+    public string? Score => IsGuessMode && IsRunning && IsAtEnd ? _guess.Score : null;
 
     // What the input tape shows (S-02, contract 3, section 6).
     public string TapeText => Run?.Input ?? "";
@@ -102,9 +114,17 @@ public sealed partial class SimulatorViewModel : ObservableObject
 
     public bool IsRejected => Run?.Verdict == Verdict.Rejected;
 
-    // The "Guess" mode (S-08) reacts to clicks on the canvas; without it a click does nothing.
+    // "Guess" mode: the answer is confirmed or corrected, then the step is taken. Otherwise a click does nothing.
     public void OnStateClicked(string state)
     {
+        if (!IsGuessMode || Run is not { IsAtEnd: false } run)
+        {
+            return;
+        }
+
+        GuessMessage = _guess.Answer(state, run.Steps[run.Position].To!);
+        run.StepForward();
+        SkipBlockingStep();
     }
 
     public void Start(string input)
@@ -123,6 +143,7 @@ public sealed partial class SimulatorViewModel : ObservableObject
         }
 
         Run = new DfaRun(_session.Document.Dfa, input);
+        ClearGuesses();
     }
 
     public void Stop()
@@ -142,7 +163,11 @@ public sealed partial class SimulatorViewModel : ObservableObject
     private void StepBack() => Run?.StepBack();
 
     [RelayCommand(CanExecute = nameof(CanStepBack))]
-    private void Reset() => Run?.Reset();
+    private void Reset()
+    {
+        Run?.Reset();
+        ClearGuesses();
+    }
 
     [RelayCommand(CanExecute = nameof(CanStepForward))]
     private void RunToEnd() => Run?.RunToEnd();
@@ -175,7 +200,32 @@ public sealed partial class SimulatorViewModel : ObservableObject
         IsPlaying = false;
     }
 
-    private bool CanStepForward() => !IsAtEnd;
+    // In "Guess" mode the only way forward is a guess.
+    private bool CanStepForward() => !IsAtEnd && !IsGuessMode;
+
+    partial void OnIsGuessModeChanged(bool value)
+    {
+        Pause();
+        ClearGuesses();
+        OnPropertyChanged(nameof(RequestedCanvasMode));
+    }
+
+    // A new score; a blocking step has no state to guess, so it is taken without a guess.
+    private void ClearGuesses()
+    {
+        _guess.Clear();
+        GuessMessage = null;
+        SkipBlockingStep();
+        OnPropertyChanged(nameof(Score));
+    }
+
+    private void SkipBlockingStep()
+    {
+        if (IsGuessMode && Run is { IsAtEnd: false } run && run.Steps[run.Position].To is null)
+        {
+            run.StepForward();
+        }
+    }
 
     private bool CanStepBack() => !IsAtStart;
 
@@ -217,6 +267,8 @@ public sealed partial class SimulatorViewModel : ObservableObject
         OnPropertyChanged(nameof(Explanation));
         OnPropertyChanged(nameof(IsAccepted));
         OnPropertyChanged(nameof(IsRejected));
+        OnPropertyChanged(nameof(RequestedCanvasMode));
+        OnPropertyChanged(nameof(Score));
         StepForwardCommand.NotifyCanExecuteChanged();
         StepBackCommand.NotifyCanExecuteChanged();
         ResetCommand.NotifyCanExecuteChanged();
