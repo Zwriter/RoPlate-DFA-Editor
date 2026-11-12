@@ -12,6 +12,8 @@
   <img alt="Coverage gate" src="https://img.shields.io/badge/core%20coverage-%E2%89%A570%25-brightgreen">
 </p>
 
+## A short tour of RoPlate:
+
 <p align="center">
   <video src="public/showcase.mp4" controls muted playsinline width="70%">
     A short tour of RoPlate: drawing an automaton, simulating a word step by step, and checking a license plate.
