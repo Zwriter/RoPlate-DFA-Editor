@@ -93,4 +93,36 @@ public class BatchTestViewModelTests
 
         opened.ShouldBe(_tests.Rows[1].Word);
     }
+
+    [Fact]
+    public void GenerateWords_ListsTheShortestAcceptedWords_WithEpsilonForTheEmptyWord()
+    {
+        _tests.GenerateWordsCommand.Execute(null);
+
+        _tests.AcceptedWords.ShouldNotBeNull();
+        _tests.AcceptedWords.ShouldStartWith("ε, b, aa, bb");
+        _session.Document.Tests.Count.ShouldBe(_tests.Rows.Count); // shown only, not added to the tests
+    }
+
+    [Fact]
+    public void GenerateWords_NothingAccepted_SaysSo()
+    {
+        _session.Replace(DfaDocument.CreateEmpty(), null);
+
+        _tests.GenerateWordsCommand.Execute(null);
+
+        _tests.AcceptedWords.ShouldBe("No accepted words up to length 12.");
+    }
+
+    [Fact]
+    public void GeneratedWords_AreClearedWhenTheAutomatonChanges_ButNotWhenAStateMoves()
+    {
+        _tests.GenerateWordsCommand.Execute(null);
+        _session.Document.MoveState("q0", new Point2(1, 1));
+        _tests.AcceptedWords.ShouldNotBeNull();
+
+        _session.Document.SetFinal("q1", true);
+
+        _tests.AcceptedWords.ShouldBeNull();
+    }
 }

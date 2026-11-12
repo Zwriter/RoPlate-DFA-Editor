@@ -270,6 +270,7 @@ public sealed class DfaDocument
     // transitions
     public OpResult AddTransitions(string from, IEnumerable<string> symbols, string to);
     public OpResult RemoveTransition(string from, string symbol);
+    public OpResult SetTransition(string from, string symbol, string? to); // ED-11: one δ cell, one undo step; null clears it
     public OpResult RemoveEdge(string from, string to);          // the whole arrow, with all its symbols
 
     // ED-08

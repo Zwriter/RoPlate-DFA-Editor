@@ -13,7 +13,7 @@ A short guide for whoever adds a panel to the app (P1, P3) or changes the window
 | `Controls/DfaCanvas/` | the drawing: `DfaCanvas` (properties, events), `DfaCanvas.Drawing.cs` (painting), `DfaCanvas.Editing.cs` (mouse and keyboard editing), `DfaCanvas.Highlight.cs` (simulation highlighting), `DfaCanvas.Descriptions.cs` (state descriptions), `DfaCanvasImage` (PNG export), `DfaCanvasSvg` (SVG export), `CanvasGeometry` (arrow math and hit-testing) |
 | `Controls/InputTape/` | the input tape of the simulation (P3) |
 | `Views/Editor/` | the alphabet and symbol classes: `EditorPanel` + `EditorViewModel` |
-| `Views/TransitionTable/` | the δ table panel (P1) |
+| `Views/TransitionTable/` | the δ table panel (P1): each cell (`TransitionCell`) is a ghost button whose menu (`TransitionChoice`) lists `—` and every state; picking one calls `SetTransition` (ED-11) |
 | `Views/Simulator/` | the simulation panel (`SimulatorPanel`, `SimulatorViewModel`, the execution table) and the batch tests (`BatchTestPanel`, `BatchTestViewModel`) (P3) |
 | `RealApps/RoPlate/` | the RoPlate window: `RoPlateWindow` + `RoPlateViewModel` (P3) |
 

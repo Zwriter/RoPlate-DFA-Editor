@@ -29,8 +29,8 @@ public class TransitionTableViewModelTests
     {
         _table.Symbols.ShouldBe(["a", "b"]);
         _table.Rows.Select(r => r.Label).ShouldBe(["→q0", "*q1"]);
-        _table.Rows[0].Targets.ShouldBe(["q1", null]);
-        _table.Rows[1].Targets.ShouldBe([null, null]);
+        Targets(0).ShouldBe(["q1", null]);
+        Targets(1).ShouldBe([null, null]);
     }
 
     [Fact]
@@ -45,11 +45,11 @@ public class TransitionTableViewModelTests
     public void Edit_AndUndo_UpdateTheTable()
     {
         _session.Document.AddTransitions("q1", ["a", "b"], "q1");
-        _table.Rows[1].Targets.ShouldBe(["q1", "q1"]);
+        Targets(1).ShouldBe(["q1", "q1"]);
 
         _session.History.Undo();
 
-        _table.Rows[1].Targets.ShouldBe([null, null]);
+        Targets(1).ShouldBe([null, null]);
     }
 
     [Fact]
@@ -70,4 +70,46 @@ public class TransitionTableViewModelTests
 
         _table.Rows.ShouldBeSameAs(rows);
     }
+
+    [Fact]
+    public void Cell_Choices_AreMissingThenEveryState_WithTheCurrentOneChecked()
+    {
+        var cell = _table.Rows[0].Cells[0];
+
+        cell.Name.ShouldBe("δ(q0, a)");
+        cell.Choices.Select(c => c.Label).ShouldBe(["—", "q0", "q1"]);
+        cell.Choices.Single(c => c.IsCurrent).Label.ShouldBe("q1");
+    }
+
+    [Fact]
+    public void PickingAChoice_SetsTheCell_AsOneUndoStep()
+    {
+        _table.Rows[0].Cells[0].Choices.Single(c => c.Label == "q0").Pick.Execute(null);
+
+        Targets(0).ShouldBe(["q0", null]);
+        _session.History.Undo();
+        Targets(0).ShouldBe(["q1", null]);
+    }
+
+    [Fact]
+    public void PickingMissing_RemovesTheTransition()
+    {
+        _table.Rows[0].Cells[0].Choices[0].Pick.Execute(null);
+
+        Targets(0).ShouldBe([null, null]);
+        _table.Error.ShouldBeNull();
+    }
+
+    [Fact]
+    public void PickingAStateThatWasRemoved_ShowsTheError()
+    {
+        var stale = _table.Rows[0].Cells[1].Choices.Single(c => c.Label == "q1");
+        _session.Document.RemoveState("q1");
+
+        stale.Pick.Execute(null);
+
+        _table.Error.ShouldBe("State 'q1' does not exist.");
+    }
+
+    private IEnumerable<string?> Targets(int row) => _table.Rows[row].Cells.Select(c => c.Target);
 }

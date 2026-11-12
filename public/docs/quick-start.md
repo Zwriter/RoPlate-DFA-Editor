@@ -30,7 +30,7 @@ The window opens with an empty automaton called **New automaton**.
 ```
 
 - **The drawing** (left): every state is a circle. A **double circle** is a final state, and the short arrow labelled **start** points at the start state. One arrow joins two states and lists all its symbols (`a, b`). When the two states have arrows both ways, the arrows are drawn as two curves. A loop over a state is a transition back to the same state.
-- **The tabs** (right): **Edit** holds the alphabet, the symbol classes and the δ table (`→` start, `*` final, `—` missing transition); **Simulate** runs a word step by step; **Tests** runs a list of words at once.
+- **The tabs** (right): **Edit** holds the alphabet, the symbol classes and the δ table (`→` start, `*` final, `—` missing transition; click a cell to change it); **Simulate** runs a word step by step; **Tests** runs a list of words at once.
 - **The status bar** (bottom): what just happened, for example `Saved C:\automata\even-a.dfa.json`.
 - **The title bar**: the automaton's name, with a `*` while you have unsaved changes.
 
@@ -76,10 +76,12 @@ Opening a broken file never crashes the app: you get a list of **every** problem
 | delete a state or an arrow | click it, then press Delete |
 | describe a state | right-click it, **Description…** (the text appears under the state) |
 | undo or redo | **↶** / **↷**, Ctrl+Z / Ctrl+Y or the **Edit** menu |
+| change one transition | click its cell in the δ table and pick the target state, or **—** to remove it |
 | add the missing transitions | **Complete with trap state** |
 | run a word | in **Simulate**, type it (empty = ε), press **Start**, then **Step forward**, **Run to end** or **Play** |
 | guess each step | in **Simulate**, tick **Guess**, then click on the drawing the state the automaton goes to |
 | test many words | in **Tests**, add words with **Add**, tick the ones that should be accepted, press **Run tests**; double-click a row to simulate it |
+| see which words are accepted | in **Tests**, press **Shortest accepted words** (ε is the empty word) |
 | check a license plate | **Apps ▸ RoPlate**, then type a plate; **Show automaton** opens it in the simulator |
 
 Closing the window with unsaved changes asks **Save changes?**, like New and Open. See the [team plan](plan/README.md) for what is left.
