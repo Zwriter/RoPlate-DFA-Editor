@@ -10,7 +10,7 @@ A short guide for whoever adds a panel to the app (P1, P3) or changes the window
 | `MainViewModel.cs` | builds every object by hand and holds the File / Examples / Apps commands |
 | `Services/` | `DocumentSession`, `NavigationService`, `DialogService` and their interfaces |
 | `Themes/Styles.axaml` | the shared brushes from contract 3 (`Brush.StateCurrent`, `Brush.TapeRead`, …) |
-| `Controls/DfaCanvas/` | the drawing: `DfaCanvas` (properties, events), `DfaCanvas.Drawing.cs` (painting), `DfaCanvas.Editing.cs` (mouse and keyboard editing), `DfaCanvas.Highlight.cs` (simulation highlighting), `CanvasGeometry` (arrow math and hit-testing) |
+| `Controls/DfaCanvas/` | the drawing: `DfaCanvas` (properties, events), `DfaCanvas.Drawing.cs` (painting), `DfaCanvas.Editing.cs` (mouse and keyboard editing), `DfaCanvas.Highlight.cs` (simulation highlighting), `DfaCanvas.Descriptions.cs` (state descriptions), `DfaCanvasImage` (PNG export), `CanvasGeometry` (arrow math and hit-testing) |
 | `Controls/InputTape/` | the input tape of the simulation (P3) |
 | `Views/Editor/` | the alphabet and symbol classes: `EditorPanel` + `EditorViewModel` |
 | `Views/TransitionTable/` | the δ table panel (P1) |
@@ -59,6 +59,7 @@ The tab order (Edit, Simulate, Tests) matches the `MainTab` enum: `NavigationSer
 | Open | `DfaJson.LoadFile`; on failure, every error is shown with `ShowErrorsAsync` and the current document stays |
 | Save | saves to `FilePath`, or behaves like Save as when there is none |
 | Save as | asks for a path, then `DfaJson.SaveFile` (atomic); on success sets `FilePath` and clears `IsDirty` |
+| Export as PNG | asks for a `.png` path (`PickSaveImageAsync`), then draws the automaton black on white with `RenderTargetBitmap` |
 
 The window title is `{name} — DFA Simulator`, with `*` after the name while `IsDirty` is true.
 
@@ -88,8 +89,8 @@ All geometry is in `CanvasGeometry` (pure math, tested in `CanvasGeometryTests`)
 | E-03 | editing on the drawing | done |
 | E-04 | alphabet and symbol classes | done |
 | E-05 | highlighting for the simulation | done |
-| E-06 | undo/redo and the trap state in the UI | not started |
-| E-07 | state descriptions | not started |
-| E-08 | image export (bonus) | not started |
+| E-06 | undo/redo and the trap state in the UI | done |
+| E-07 | state descriptions | done |
+| E-08 | image export (bonus) | done (PNG; SVG not included) |
 
 Known gaps: closing the window does not ask to save.

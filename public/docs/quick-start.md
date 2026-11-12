@@ -58,6 +58,7 @@ If you have unsaved changes, the app first asks **Save changes?** Choose **Yes**
 | **File ▸ Open…** | Ctrl+O | opens a `.dfa.json` file |
 | **File ▸ Save** | Ctrl+S | saves to the current file (asks for a name the first time) |
 | **File ▸ Save as…** | Ctrl+Shift+S | saves under a new name |
+| **File ▸ Export as PNG…** | | saves the drawing as an image |
 
 Opening a broken file never crashes the app: you get a list of **every** problem, with the field that caused it, and the automaton you had stays open. The file format is plain JSON you can edit by hand; see [contract 2](plan/contracts/02-json-format.md).
 
@@ -72,11 +73,15 @@ Opening a broken file never crashes the app: you get a list of **every** problem
 | change an arrow's symbols | double-click the arrow |
 | make a state start or final, rename or delete it | right-click it |
 | delete a state or an arrow | click it, then press Delete |
+| describe a state | right-click it, **Description…** (the text appears under the state) |
+| undo or redo | **↶** / **↷**, Ctrl+Z / Ctrl+Y or the **Edit** menu |
+| add the missing transitions | **Complete with trap state** |
 | run a word | in **Simulate**, type it (empty = ε), press **Start**, then **Step forward**, **Run to end** or **Play** |
+| guess each step | in **Simulate**, tick **Guess**, then click on the drawing the state the automaton goes to |
 | test many words | in **Tests**, add words with **Add**, tick the ones that should be accepted, press **Run tests**; double-click a row to simulate it |
 | check a license plate | **Apps ▸ RoPlate**, then type a plate; **Show automaton** opens it in the simulator |
 
-Still to come: the animation on the drawing during a simulation, the "Guess" mode, undo/redo and the trap state in the UI, state descriptions and image export; see the [team plan](plan/README.md).
+Not included yet: SVG export, and closing the window does not ask to save; see the [team plan](plan/README.md).
 
 ## Troubleshooting
 
