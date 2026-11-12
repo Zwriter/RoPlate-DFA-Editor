@@ -57,6 +57,10 @@ public sealed partial class DfaCanvas
 
             DrawStateHighlight(context, state, center, brush);
             DrawText(context, brush, state, center);
+            if (document.Descriptions.TryGetValue(state, out var description))
+            {
+                DrawDescription(context, Brushes.Gray, description, center);
+            }
         }
 
         if (dfa.StartState is { } start)
@@ -83,7 +87,8 @@ public sealed partial class DfaCanvas
         }
 
         var margin = CanvasGeometry.Radius * 2;
-        return new Size(document.Layout.Values.Max(p => p.X) + margin, document.Layout.Values.Max(p => p.Y) + margin);
+        var below = document.Descriptions.Count > 0 ? margin + DescriptionRoom : margin;
+        return new Size(document.Layout.Values.Max(p => p.X) + margin, document.Layout.Values.Max(p => p.Y) + below);
     }
 
     private EdgeShape ShapeOf(DfaDocument document, Edge edge, IReadOnlyList<Edge> edges)

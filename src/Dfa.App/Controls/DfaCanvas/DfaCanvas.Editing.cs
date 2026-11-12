@@ -143,7 +143,7 @@ public sealed partial class DfaCanvas
         rename.Click += async (_, _) => await RenameAsync(document, state);
         var delete = new MenuItem { Header = "Delete" };
         delete.Click += (_, _) => Report(document.RemoveState(state));
-        return new ContextMenu { ItemsSource = new[] { start, final, rename, delete } };
+        return new ContextMenu { ItemsSource = new[] { start, final, rename, DescriptionMenuItem(document, state), delete } };
     }
 
     private async Task RenameAsync(DfaDocument document, string state)
