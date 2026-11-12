@@ -151,4 +151,44 @@ public sealed class MainViewModelTests : IDisposable
         _main.Simulator.CurrentState.ShouldBeNull();
         _main.Simulator.HighlightKind.ShouldBe(HighlightKind.None);
     }
+
+    [Fact]
+    public void UndoRedo_AreEnabledByTheHistory()
+    {
+        _main.UndoCommand.CanExecute(null).ShouldBeFalse();
+        _main.RedoCommand.CanExecute(null).ShouldBeFalse();
+
+        _main.Session.Document.AddState(new Point2(0, 0));
+        _main.UndoCommand.CanExecute(null).ShouldBeTrue();
+
+        _main.UndoCommand.Execute(null);
+        _main.Session.Document.Dfa.States.ShouldBeEmpty();
+        _main.RedoCommand.CanExecute(null).ShouldBeTrue();
+
+        _main.RedoCommand.Execute(null);
+        _main.Session.Document.Dfa.States.ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void CompleteWithTrap_PutsTheTrapToTheRightOfTheDrawing()
+    {
+        _main.Session.Document.AddSymbol("a");
+        _main.Session.Document.AddState(new Point2(100, 100));
+        _main.Session.Document.AddState(new Point2(300, 200));
+
+        _main.CompleteWithTrapCommand.Execute(null);
+
+        _main.Session.Document.Layout["trap"].ShouldBe(new Point2(450, 150));
+        _main.Session.Document.Dfa.Next("q0", "a").ShouldBe("trap");
+    }
+
+    [Fact]
+    public void CompleteWithTrap_OnACompleteAutomaton_ShowsTheMessage()
+    {
+        _main.Session.Replace(ExampleCatalog.Load("even-a"), null);
+
+        _main.CompleteWithTrapCommand.Execute(null);
+
+        _main.StatusMessage.ShouldBe("The automaton is already complete.");
+    }
 }

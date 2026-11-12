@@ -19,6 +19,8 @@
     <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenCommand}" />
     <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}" />
     <KeyBinding Gesture="Ctrl+Shift+S" Command="{Binding SaveAsCommand}" />
+    <KeyBinding Gesture="Ctrl+Z" Command="{Binding UndoCommand}" />
+    <KeyBinding Gesture="Ctrl+Y" Command="{Binding RedoCommand}" />
   </Window.KeyBindings>
 
   <Window.Styles>
@@ -30,27 +32,41 @@
   </Window.Styles>
 
   <DockPanel>
-    <Menu DockPanel.Dock="Top">
-      <MenuItem Header="_File">
-        <MenuItem Header="_New" InputGesture="Ctrl+N" Command="{Binding NewCommand}" />
-        <MenuItem Header="_Open…" InputGesture="Ctrl+O" Command="{Binding OpenCommand}" />
-        <MenuItem Header="_Save" InputGesture="Ctrl+S" Command="{Binding SaveCommand}" />
-        <MenuItem Header="Save _as…" InputGesture="Ctrl+Shift+S" Command="{Binding SaveAsCommand}" />
-      </MenuItem>
-      <MenuItem Header="_Examples" ItemsSource="{Binding Examples}">
-        <MenuItem.Styles>
-          <Style Selector="MenuItem > MenuItem" x:DataType="examples:ExampleInfo">
-            <Setter Property="Header" Value="{Binding Title}" />
-            <Setter Property="Command"
-                    Value="{Binding $parent[Window].((app:MainViewModel)DataContext).OpenExampleCommand}" />
-            <Setter Property="CommandParameter" Value="{Binding}" />
-          </Style>
-        </MenuItem.Styles>
-      </MenuItem>
-      <MenuItem Header="_Apps">
-        <MenuItem Header="_RoPlate" Command="{Binding ShowRoPlateCommand}" />
-      </MenuItem>
-    </Menu>
+    <!-- The menu row from contract 3: File, Examples, Edit, [↶] [↷] [Complete with trap state]. -->
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="4">
+      <Menu>
+        <MenuItem Header="_File">
+          <MenuItem Header="_New" InputGesture="Ctrl+N" Command="{Binding NewCommand}" />
+          <MenuItem Header="_Open…" InputGesture="Ctrl+O" Command="{Binding OpenCommand}" />
+          <MenuItem Header="_Save" InputGesture="Ctrl+S" Command="{Binding SaveCommand}" />
+          <MenuItem Header="Save _as…" InputGesture="Ctrl+Shift+S" Command="{Binding SaveAsCommand}" />
+        </MenuItem>
+        <MenuItem Header="_Examples" ItemsSource="{Binding Examples}">
+          <MenuItem.Styles>
+            <Style Selector="MenuItem > MenuItem" x:DataType="examples:ExampleInfo">
+              <Setter Property="Header" Value="{Binding Title}" />
+              <Setter Property="Command"
+                      Value="{Binding $parent[Window].((app:MainViewModel)DataContext).OpenExampleCommand}" />
+              <Setter Property="CommandParameter" Value="{Binding}" />
+            </Style>
+          </MenuItem.Styles>
+        </MenuItem>
+        <MenuItem Header="E_dit">
+          <MenuItem Header="_Undo" InputGesture="Ctrl+Z" Command="{Binding UndoCommand}" />
+          <MenuItem Header="_Redo" InputGesture="Ctrl+Y" Command="{Binding RedoCommand}" />
+          <MenuItem Header="Complete with _trap state" Command="{Binding CompleteWithTrapCommand}" />
+        </MenuItem>
+        <MenuItem Header="_Apps">
+          <MenuItem Header="_RoPlate" Command="{Binding ShowRoPlateCommand}" />
+        </MenuItem>
+      </Menu>
+      <!-- E-06: the toolbar buttons; ↶ / ↷ have a name and a tooltip, not only the symbol. -->
+      <Button Content="↶" Command="{Binding UndoCommand}" VerticalAlignment="Center"
+              ToolTip.Tip="Undo (Ctrl+Z)" AutomationProperties.Name="Undo" />
+      <Button Content="↷" Command="{Binding RedoCommand}" VerticalAlignment="Center"
+              ToolTip.Tip="Redo (Ctrl+Y)" AutomationProperties.Name="Redo" />
+      <Button Content="Complete with trap state" Command="{Binding CompleteWithTrapCommand}" VerticalAlignment="Center" />
+    </StackPanel>
 
     <Border DockPanel.Dock="Bottom" Padding="8,4"
             BorderThickness="0,1,0,0" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
