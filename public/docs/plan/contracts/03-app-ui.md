@@ -105,6 +105,7 @@ public interface IDialogService
     Task<string?> AskTextAsync(string title, string prompt, string initial = ""); // null = Cancel
     Task<string?> PickOpenFileAsync();                                          // *.dfa.json filter
     Task<string?> PickSaveFileAsync(string suggestedName);
+    Task<string?> PickSaveImageAsync(string suggestedName);                     // *.png filter (E-08)
 }
 ```
 

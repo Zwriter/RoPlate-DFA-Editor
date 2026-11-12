@@ -191,4 +191,13 @@ public sealed class MainViewModelTests : IDisposable
 
         _main.StatusMessage.ShouldBe("The automaton is already complete.");
     }
+
+    [Fact]
+    public async Task ExportPng_Cancelled_DoesNothing()
+    {
+        await _main.ExportPngCommand.ExecuteAsync(null);
+
+        _dialogs.Errors.ShouldBeEmpty();
+        _main.StatusMessage.ShouldBe("Ready");
+    }
 }
